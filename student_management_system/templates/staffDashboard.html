@@ -1,0 +1,167 @@
+{% extends "base/base1.html" %}
+{% load static %}
+
+
+{% block title %}HOD List{% endblock title %}
+
+{% block main %}
+
+<div class="row mx-auto">
+    <div class="col-xl-4 col-md-12 my-auto">
+      <!-- Earnings (Monthly) Card Example -->
+      <div class="col-xl-12 col-md-6 mb-4">
+          <div class="card border-left-primary shadow h-100 py-2">
+              <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                              Students </div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{studentNo}}</div>
+                      </div>
+                      <div class="col-auto rounded-circle">
+                          <img class="fas fa-calendar fa-2x text-gray-300"></img>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    
+      <!-- Earnings (Monthly) Card Example -->
+      <div class="col-xl-12 col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+              <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                              Staffs </div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{staffNo}}</div>
+                      </div>
+                      <div class="col-auto rounded-circle">
+                          <img class="fas fa-dollar-sign fa-2x text-gray-300"></img>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="col-xl-12 col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+              <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                              Courses </div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{courseNo}}</div>
+                      </div>
+                      <div class="col-auto rounded-circle">
+                          <img class="fas fa-dollar-sign fa-2x text-gray-300"></img>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+    
+      <!-- Earnings (Monthly) Card Example -->
+      <div class="col-xl-12 col-md-6 mb-4">
+          <div class="card border-left-success shadow h-100 py-2">
+              <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                      <div class="col mr-2">
+                          <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                              Subjects </div>
+                          <div class="h5 mb-0 font-weight-bold text-gray-800">{{subjectNo}}</div>
+                      </div>
+                      <div class="col-auto rounded-circle">
+                          <img class="fas fa-dollar-sign fa-2x text-gray-300"></img>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+    </div>
+
+    <div class="col-md-12 col-xl-8">
+        <div class="card dashboard-card-three mb-4">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3 class="text-center">Students</h3>
+                    </div>
+                </div>
+                <!-- Canvas element for the pie chart -->
+                <div class="doughnut-chart-wrap pt-3">
+                    <canvas id="student-doughnut-chart" width="400" height="400"></canvas>
+                </div>
+                <div class="student-report row pt-3">
+                    <div class="student-count pseudo-bg-yellow m-auto row">
+                        <h4 class="item-title">Male Student : &ensp;</h4>
+                        <h4 class="item-number">{{ studentMale }}</h4>
+                    </div>
+                    <div class="student-count pseudo-bg-blue m-auto row">
+                        <h4 class="item-title">Female Student : &ensp;</h4>
+                        <h4 class="item-number">{{ studentFemale }}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    
+    <!-- JavaScript to initialize the pie chart -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get canvas element
+            var ctx = document.getElementById('student-doughnut-chart').getContext('2d');
+            
+            // Define data for the chart
+            var data = {
+                labels: ['Male Students', 'Female Students'],
+                datasets: [{
+                    data: [{{ studentMale }}, {{ studentFemale }}],
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.5)', // Yellow
+                        'rgba(54, 162, 235, 0.5)'   // Blue
+                    ],
+                    borderColor: [
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            // Define options for the chart
+            var options = {
+                responsive: true,
+                maintainAspectRatio: false
+            };
+            
+            // Create the pie chart
+            var myPieChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: data,
+                options: options
+            });
+        });
+        
+    </script>
+
+<div>
+    Request for Student acceptation
+</div>
+
+{% endblock main %}
+
+{% block js %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+<script src="{% static 'vendor/chart.js/chart.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/chart-area-demo.js' %}"></script>
+<script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
+<script src="{% static 'js/calender.js' %}"></script>
+
+
+{% endblock js %}

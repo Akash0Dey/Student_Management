@@ -1,0 +1,58 @@
+{% extends "base/base1.html" %}
+{% load static %}
+
+
+{% block title %}Course List{% endblock title %}
+
+{% block main %}
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Course List</h6>
+  </div>
+  <div class="card-body">
+      <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                  <tr>
+                    <th>Course</th>
+                    <th>Subjects</th>
+                  </tr>
+                </thead>
+              <tbody>
+                {% if courseTable %}
+                  {% for i in courseTable %}                
+                  <tr>
+                      <td class="text-center">{{i.course_name}}</td>
+                      <td>{% if course.subjects %}
+                        {% for semester, subjects in course.subjects %}
+                          <strong>{{ semester }}</strong><br>
+                          {% for subject in subjects %}
+                            &nbsp;{{ subject }}&nbsp;<br>
+                          {% endfor %}
+                        {% endfor %}
+                      {% else %}
+                        Could Not Fetch Subjects
+                      {% endif %}</td>
+                  </tr>
+                  {% endfor %}
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+    </div>
+</div>       
+
+{% endblock main %}
+
+{% block js %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+</script>
+{% endblock js %}

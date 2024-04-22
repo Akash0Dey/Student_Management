@@ -1,0 +1,90 @@
+{% extends "base/base2.html" %}
+
+{% block title %}Register{% endblock title %} 
+
+
+{% block main %}
+<div class="container">
+
+    <div class="wrapper rounded bg-white">
+        <div class="h3">Registration Form</div>
+        <form class="form"  enctype="multipart/form-data" method="post">
+            <div class="form-group">
+
+                {% csrf_token %}
+                {% include 'include/massage.html' %}
+                {% if viewmode %}
+                <div class="row col-md-6 d-block m-auto mt-md-0 mt-3 ">
+                        <!-- Display the photo as an image -->
+                        <img src="{{ photo }}" alt="Student Photo">
+                    </div>
+                {% endif %}
+                <div class="row">
+                    <div class="col-md-6 mt-md-0 mt-3 m">
+                        <label for="Name">Name</label>
+                        <input type="text" class="form-control" id="Name" name="Name" value="{{ Name }}" required>
+                    </div>
+                    <div class="col-md-6 mt-md-0 mt-3">
+                        <label for="regid">Registration Id</label>
+                        <input type="text" class="form-control" id="regid" name="regid" value="{{ RegID }}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mt-md-0 mt-3">
+                        <label for="Birthday">Birthday</label>
+                        <input type="date" class="form-control" id="Birthday" name="Birthday" value="{{ DOB|date:'Y-m-d'}}" required>
+                    </div>
+                    <div class="col-md-6 mt-md-0 mt-3">
+                        <label for="Gender">Gender</label>
+                        <div class="d-flex align-items-center mt-2">
+                            <label class="option">
+                                <input type="radio" name="Gender" value="Male" {% if Gender == "Male" %} checked {% endif %}>Male
+                                <span class="checkmark"></span>
+                            </label>
+                            <label class="option ms-4">
+                                <input type="radio" name="Gender" value="Female" {% if Gender == "Female" %} checked {% endif %}>Female
+                                <span class="checkmark"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mt-md-0 mt-3">
+                        <label for="Email">Email</label>
+                        <input type="email" class="form-control" id="Email" name="Email" value="{{ Email }}" required>
+                    </div>
+                    <div class="col-md-6 mt-md-0 mt-3">
+                        <label for="PhoneNumber">Phone Number</label>
+                        <input type="tel" class="form-control" id="PhoneNumber" name="PhoneNumber" value="{{ Phone }}" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mt-md-0 mt-3">
+                        <label for="CurrentSemester">Current Semester</label>
+                        <select id="CurrentSemester" name="CurrentSemester" required>
+                            {% for S in Sem %}
+                            <option value="{{S}}" {% if S == semester %} selected {% endif %}>{{S}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-md-6 mt-md-0 mt-3">
+                        <label for="Major">Major</label>
+                        <select id="Major" name="Major" required>
+                            {% for D in Dept %}
+                            <option value="{{D}}" {% if D == department %} selected {% endif %}>{{D}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="row col-md-12 mt-md-0 mt-3">
+                    <label for="Photo">Photo</label>
+                    <input class="form-control" id="Photo" type="file" name="Photo">
+                </div>
+                <div class="d-flex justify-content-center ">
+                    <button type="submit" class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 ">Register</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock main %}

@@ -1,0 +1,46 @@
+{% extends "base/base2.html" %}
+
+
+{% block title %}Login{% endblock title %}
+
+{% block main %}
+<div class="container">
+
+    <div class="wrapper rounded bg-white">
+        <div class="h3">Logging In</div>
+        <form class="form"  enctype="multipart/form-data" method="post">
+            <div class="form-group">
+
+                {% csrf_token %}
+                <div class="col-md-12 col-lg-12 col-xl-12 d-flex px-auto">
+                    
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Sample image">
+                    
+                </div>
+                
+                {% include 'include/massage.html' %}
+                <div class="row">
+                    <div class="col-md-12 mt-md-0 mt-3">
+                        <label for="user">UserName</label>
+                        <input type="text" class="form-control" id="user" name="user" required>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="col-md-12 mt-md-0 mt-3">
+                        <label for="password">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                </div>
+                
+                <div class="d-flex justify-content-center ">
+                    <button type="submit" class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 ">Log in</button>
+                </div>
+                
+                <p class="text-center text-muted mt-5 mb-0">Don't have an account? <a href="{% url 'signup' %}" class="fw-bold text-body"><u>Sign up here</u></a></p>
+            
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock main %}

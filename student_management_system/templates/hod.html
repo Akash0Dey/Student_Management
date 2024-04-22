@@ -1,0 +1,67 @@
+{% extends "base/base1.html" %}
+{% load static %}
+
+
+{% block title %}HOD List{% endblock title %}
+
+{% block main %}
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">HOD List</h6>
+  </div>
+  <div class="card-body">
+      <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                  </tr>
+                </thead>
+              <tbody>
+                {% if HODTable %}
+                  {% for i in HODTable %}                
+                  <tr>
+                      <th>{{i.pk}}</td>
+                      <td>{{i.name}}</td>
+                      <td>{{i.email}}</td>
+                  </tr>
+                  {% endfor %}
+              {% endif %}
+            </tbody>
+          </table>
+        </div>
+    </div>
+</div>
+
+
+                <!-- <td>
+                    <div class="dropdown no-arrow">
+                        <button class="btn btn-sm btn-light dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                          <button class="dropdown-item" onclick="studentDetels({{i.0}})">View Details</button>
+                          <div class="dropdown-divider"></div>
+                          <div class="dropdown-header">Advance:</div>
+                          <button class="dropdown-item" onclick ="studentEditMOdal({{i.0}}, '{{i.1}}','{{i.2}}')">Edit</button>
+                          <button onclick="studentDelete({{i.0}})" class="dropdown-item">Delete</button>
+                        </div>
+                    </div>
+                </td> -->        
+
+{% endblock main %}
+
+{% block js %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+</script>
+{% endblock js %}
