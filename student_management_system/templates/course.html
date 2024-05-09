@@ -23,16 +23,16 @@
                   {% for i in courseTable %}                
                   <tr>
                       <td class="text-center">{{i.course_name}}</td>
-                      <td>{% if course.subjects %}
-                        {% for semester, subjects in course.subjects %}
-                          <strong>{{ semester }}</strong><br>
-                          {% for subject in subjects %}
-                            &nbsp;{{ subject }}&nbsp;<br>
-                          {% endfor %}
+                      <td>{% if i.subjects %}
+                        {% for semester, subjects in i.subjects.items %}
+                            <strong>{{ semester }}</strong><br>
+                            {% for subject in subjects %}
+                                &nbsp;{{ subject }}&nbsp;
+                            {% endfor %}
                         {% endfor %}
-                      {% else %}
+                    {% else %}
                         Could Not Fetch Subjects
-                      {% endif %}</td>
+                    {% endif %}</td>
                   </tr>
                   {% endfor %}
               {% endif %}

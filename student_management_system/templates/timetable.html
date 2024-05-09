@@ -1,0 +1,62 @@
+{% extends 'base/base1.html' %}
+{% load static %}
+{% block title %}Routine{% endblock title %}
+
+
+{% block main %}
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">{{maj}}&ensp;&ensp;{{sem}}</h6>
+  </div>
+  <div class="card-body">
+      <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                  <tr>
+                    <th class="text-center col-auto">TIME\DAY</th>
+                    {% if day %}
+                    {% for time in day %}
+                    <th class="col-auto text-center">{{time}}</th>
+                    {% endfor %}
+                    {% endif %}
+                  </tr>
+                </thead>
+              <tbody>
+                {% if timeslots %}
+                {% for time in timeslots %}
+                <tr>
+                  <td class="text-center">{{time}}</td>                  
+                  {% if routines %}
+                  {% for i in routines %}
+                    {% if i.timeslot == time %}
+                      {% if i.subject %}           
+                      <td class="text-center"><div class="subject-name p-0">{{i.subject.subject_id.subject_name}}</div><div class="teacher-name p-0">{{i.subject.staff_id.name}}</div></td>   
+                      {% else %}               
+                      <td class="text-center">-</td>                  
+                      {% endif %}
+                      {% endif %}
+                    {% endfor %}
+                {% endif %}
+                </tr>
+                {% endfor %}
+                {% endif %}
+               </tbody>
+          </table>
+        </div>
+    </div>
+</div>       
+
+{% endblock main %}
+
+{% block js %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+</script>
+{% endblock js %}

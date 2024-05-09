@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
+from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import random
 import json
 from usermodule.models import CustomUser,Student,Staff, Semester, HOD, Courses
-from datamodule.models import Attendance, AttendanceReport, Session, Subject, SubjectWithStaff
+from datamodule.models import Attendance, AttendanceReport, Session, Subject, SubjectWithStaff, Routine, TimeSlot
 
 # Create your views here.
 
@@ -13,6 +14,12 @@ SEMdata = ["1st", "2nd", "3rd", "4th", "5th", "6th"]
 YEARdata = ["1st", "1st", "2nd", "2nd", "3rd", "3rd"]
 DEPTdata = ["CST", "EE", "ME", "ETC"]
 
+
+def get_str(object, objectlist):
+    for ob in objectlist:
+        if str(ob) == object:
+            return ob
+    return None
 
 
 @login_required(login_url="/login")
@@ -327,19 +334,20 @@ def Course_list(request):
             'course_name': course.course_name,
             'subjects': {}
         }
-
+        subject = Subject.objects.filter(course_id=course)
+        for subject_id in subject:
         # Group subjects by semester
-        subjects = SubjectWithStaff.objects.filter(subject_id=Subject.objects.filter(course_id=course).first())
-        for subject in subjects:
-            semester = subject.subject_id.semester_id.semester  # Assuming subjects have a 'semester' field
+            subjects = SubjectWithStaff.objects.filter(subject_id=subject_id)
+            for subject in subjects:
+                semester = subject.subject_id.semester_id.semester  # Assuming subjects have a 'semester' field
 
-            if semester in course_data['subjects']:
+                if semester in course_data['subjects']:
 
-                course_data['subjects'][semester].append(subject.subject_id.subject_name)
+                    course_data['subjects'][semester].append(subject.subject_id.subject_name)
 
-            else:
+                else:
 
-                course_data['subjects'][semester] = [subject.subject_id.subject_name]
+                    course_data['subjects'][semester] = [subject.subject_id.subject_name]
 
         courseTable.append(course_data)
     data = {
@@ -413,28 +421,43 @@ def Subject_list(request):
 
 
 @login_required(login_url="/login")
+def SubjectStaff_list(request):
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user).first()
+
+    subjects = SubjectWithStaff.objects.all()
+
+    # Prepare courseTable data
+    subjectTable = []
+    for subject in subjects:
+        subject_data = {
+            'subject_name': subject.subject_id.subject_name,
+            'course_name': subject.subject_id.course_id.course_name,
+            'semester_name': subject.subject_id.semester_id.semester,
+            'staff': subject.staff_id.name,
+            'session': str(subject.session_id.session_start_year.year)+"-"+str(subject.session_id.session_end_year.year),
+        }
+        subjectTable.append(subject_data)
+    data = {
+        "user": User,
+        "usertype": usertypedata[int(user.user_type)],
+        "subjectTable": subjectTable,
+    }  
+    return render(request, 'subjectStaffList.html', data)  
+
+
+@login_required(login_url="/login")
 def SubjectForTeacher(request):
     user = request.user
     if int(user.user_type) != 1:
         return redirect("index")
     else:
         hod = HOD.objects.filter(hod=user).first()
-
-    if request.method == 'POST':
-        name = request.POST.get('Name')
-        course = Courses.objects.filter(course_name=request.POST.get('Major')).first()
-        sem = Semester.objects.filter(semester=request.POST.get('Semester')).first()
-        
-        if Subject.objects.filter(subject_name=name, course_id=course, semester_id=sem).exists():
-            messages.error(request, "Subject Name Already Exists!")
-        else:
-            try:
-                Subject.objects.create(subject_name=name, course_id=course, semester_id=sem)
-                messages.success(request, "Subject Successfully Added")
-                return redirect('index')
-            except Exception as e:
-                messages.error(request, "Subject Adding Unsuccessful: {}".format(str(e)))
-
     data = {
         "user": hod,
         "usertype": usertypedata[int(user.user_type)],
@@ -442,8 +465,27 @@ def SubjectForTeacher(request):
         "Staff": Staff.objects.all(),
         "Session": Session.objects.all(),
     }
+
+    if request.method == 'POST':
+
+        subject = get_str(request.POST.get('Subject'), data["Subject"])
+        staff = get_str(request.POST.get('Staff'), data["Staff"])
+        session = get_str(request.POST.get('Session'), data["Session"])
+
+        try:
+            
+            if SubjectWithStaff.objects.filter(subject_id=subject, session_id=session, staff_id=staff).exists():
+                messages.error(request, "This Log Already Exists!")
+            elif SubjectWithStaff.objects.filter(subject_id=subject, session_id=session).exists():
+                messages.error(request, "Staff for this Session Already Exists!")
+            else:
+                sub = SubjectWithStaff.objects.create(subject_id=subject, session_id=session, staff_id=staff)
+                messages.success(request, "Subject Successfully Added")
+                return redirect('index')
+        except Exception as e:
+            messages.error(request, "Subject Adding Unsuccessful: {}".format(str(e)))
     
-    return render(request, 'subjectNew.html', data)
+    return render(request, 'subjectStaff.html', data)
 
 
 @login_required(login_url="/login")
@@ -506,3 +548,132 @@ def Session_list(request):
     return render(request, 'sessionlist.html', data)  
 
 
+
+@login_required(login_url="/login")
+def timetable_view(request, semester_id, major_id):
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user).first()
+
+        # Get the selected semester and major
+    semester = Semester.objects.get(id=semester_id)
+    major = Courses.objects.get(id=major_id)
+
+
+    # Get routines for the selected semester and major
+    routines = Routine.objects.filter(semester=semester, course=major).order_by('timeslot').order_by('day')
+    timeslot = TimeSlot.objects.all().order_by("start_time")
+
+    data = {
+        "user": User,
+        "usertype": usertypedata[int(user.user_type)],
+        'sem': semester,
+        'maj': major,
+        'day': ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+        'routines': routines,
+        'timeslots': timeslot,
+        }  # For initial load, no data
+    return render(request, 'timetable.html', data)
+
+
+
+@login_required(login_url="/login")
+def routine(request):
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user).first()
+
+    data = {
+        "user": User,
+        "usertype": usertypedata[int(user.user_type)],
+        'semester': Semester.objects.all(),
+        'major': Courses.objects.all(),
+        }  # For initial load, no data
+    return render(request, 'routine.html', data)
+
+
+
+@login_required(login_url="/login")
+def set_routine(request):
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user).first()
+
+    data = {
+        "user": User,
+        "usertype": usertypedata[int(user.user_type)],
+        'semester': Semester.objects.all(),
+        'major': Courses.objects.all(),
+        }  # For initial load, no data
+    return render(request, 'set-routine.html', data)
+
+
+
+
+
+@login_required(login_url="/login")
+def set_routine_view(request, semester_id, major_id):
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user).first()
+
+        # Get the selected semester and major
+    semester = Semester.objects.get(id=semester_id)
+    major = Courses.objects.get(id=major_id)
+    routines = Routine.objects.filter(semester=semester, course=major).order_by('timeslot').order_by('day')
+
+    if request.method == "POST":
+        form_data = request.POST
+        for routine in routines:
+            routine_data = form_data[f'routine_{routine.id}']
+            if routine_data != 'blank':
+                timetable = Routine.objects.get(id = routine.id)
+                timetable.subject = SubjectWithStaff.objects.get(id = routine_data)
+                timetable.save()
+            else:
+                timetable = Routine.objects.get(id = routine.id)
+                timetable.subject = None
+                timetable.save()
+
+        return redirect(reverse("routine", args=(semester_id, major_id)))
+    else:
+        # Get routines for the selected semester and major
+        timeslot = TimeSlot.objects.all().order_by("start_time")
+        session = Session.objects.last()
+
+        subjects = SubjectWithStaff.objects.all()
+
+        # Prepare courseTable data
+        subjectTable = []
+        for subject in subjects:
+            
+            if subject.subject_id.semester_id == semester and subject.subject_id.course_id == major and subject.session_id == session:
+                subjectTable.append(subject)
+
+        data = {
+            "user": User,
+            "usertype": usertypedata[int(user.user_type)],
+            'sem': semester,
+            'maj': major,
+            'day': ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'),
+            'routines': routines,
+            'timeslots': timeslot,
+            'subject': subjectTable
+            }  # For initial load, no data
+    return render(request, 'setTable.html', data)

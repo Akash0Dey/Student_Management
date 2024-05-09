@@ -58,7 +58,7 @@ class Staff(models.Model):
     def wrapper(instance, filename):
         ext = filename.split('.')[-1]
         # get filename
-        filename = '{}.{}'.format(instance.pk, ext)
+        filename = '{}.{}'.format(instance.id, ext)
         
         # return the whole path to the file
         return os.path.join("Staff", filename)
@@ -86,7 +86,7 @@ class Student(models.Model):
     def wrapper(instance, filename):
         ext = filename.split('.')[-1]
         # get filename
-        filename = '{}.{}'.format(instance.pk, ext)
+        filename = '{}.{}'.format(instance.id, ext)
 
         return os.path.join("Student", filename)
 
@@ -110,8 +110,6 @@ class Student(models.Model):
 
     def __str__(self):
         return self.name
-    
-
 
 
 # @receiver(post_save,sender=CustomUser)

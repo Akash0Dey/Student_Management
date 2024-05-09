@@ -84,13 +84,25 @@ urlpatterns = [
 
     path('subject/list', d_views.Subject_list, name="Subjectlist"),
 
+    path('subject/staff/list', d_views.SubjectStaff_list, name="SubjectStafflist"),
+
+    path('subject/staff', d_views.SubjectForTeacher, name="SubjectStaff"),
+
     # Session
 
     path('session/add', d_views.add_session, name="addSession"),
 
     path('session/list', d_views.Session_list, name="Sessionlist"),
 
+    # Routine
 
+    path('routine/', d_views.routine, name="routine123"),
+
+    path('routine/<int:semester_id>/<int:major_id>/', d_views.timetable_view, name="routine"),
+
+    path('set-routine/<int:semester_id>/<int:major_id>/', d_views.set_routine_view, name="setRoutine"),
+
+    path('set-routine/', d_views.set_routine, name="setRoutine123"),
 
 
     

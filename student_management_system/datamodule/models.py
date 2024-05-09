@@ -15,7 +15,7 @@ class Session(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return f'{self.session_start_year.year} to {self.session_end_year.year}'
+        return f'{self.session_start_year.year}-{self.session_end_year.year}'
 
 
 class Subject(models.Model):
@@ -28,7 +28,7 @@ class Subject(models.Model):
     objects=models.Manager()
 
     def __str__(self):
-        return self.subject_name+" "+self.course_id.course_name
+        return self.subject_name+" "+self.course_id.course_name+" "+self.semester_id.semester
 
 
 class SubjectWithStaff(models.Model):
@@ -41,7 +41,7 @@ class SubjectWithStaff(models.Model):
     objects=models.Manager()
 
     def __str__(self):
-        return self.subject_id.subject_name+" "+self.staff_id.name+" "+self.subject_id.course_id.course_name
+        return self.subject_id.subject_name+" "+self.subject_id.course_id.course_name+" "+self.subject_id.semester_id.semester+" "+self.staff_id.name+" "+str(self.session_id.session_start_year.year)+"-"+str(self.session_id.session_end_year.year)
 
 
 class Attendance(models.Model):
@@ -66,3 +66,32 @@ class AttendanceReport(models.Model):
 
     def __str__(self):
         return self.student_id.name +" "+self.attendance_id.attendance_date+" "+self.attendance_id.subject_id.subject_id.subject_name
+    
+
+
+class TimeSlot(models.Model):
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+
+    def __str__(self):
+        return f"{self.start_time.strftime('%H:%M')} - {self.end_time.strftime('%H:%M')}"
+
+class Routine(models.Model):
+
+    id=models.AutoField(primary_key=True)
+
+    course=models.ForeignKey(Courses,on_delete=models.DO_NOTHING)
+
+    semester = models.ForeignKey(Semester, on_delete=models.DO_NOTHING)
+
+    day = models.CharField(max_length=10, choices=[('Monday', 'Monday'), ('Tuesday', 'Tuesday'), ('Wednesday', 'Wednesday'),
+                                                   ('Thursday', 'Thursday'), ('Friday', 'Friday'), ('Saturday', 'Saturday')])
+
+    timeslot = models.ForeignKey(TimeSlot, on_delete=models.DO_NOTHING)
+
+    subject = models.ForeignKey(SubjectWithStaff, on_delete=models.DO_NOTHING, null=True, blank=True)
+
+    def __str__(self):
+    
+        return f"{self.course} {self.semester.semester}  {self.day} - {self.timeslot}"
+

@@ -17,6 +17,8 @@
                     <th>Subject</th>
                     <th>Course</th>
                     <th>Semester</th>
+                    <th>Staff</th>
+                    <th>Session</th>
                   </tr>
                 </thead>
               <tbody>
@@ -26,6 +28,8 @@
                       <td class="text-center">{{i.subject_name}}</td>
                       <td class="text-center">{{i.course_name}}</td>
                       <td class="text-center">{{i.semester_name}}</td>                     
+                      <td class="text-center">{{i.staff}}</td>                     
+                      <td class="text-center">{{i.session}}</td>                     
                   </tr>
                   {% endfor %}
               {% endif %}
