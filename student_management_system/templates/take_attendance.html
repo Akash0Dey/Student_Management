@@ -1,0 +1,39 @@
+{% extends 'base/base1.html' %}
+{% load static %}
+{% block title %}Take Attendance{% endblock title %}
+
+{% block main %}
+
+<div class="container">
+
+    <div class="wrapper rounded bg-white">
+        <div class="h3">New Subject</div>
+        <form class="form"  enctype="multipart/form-data" method="post">
+            <div class="form-group">
+
+                {% csrf_token %}
+                {% include 'include/massage.html' %}
+                <div class="col-md-12 col-lg-12 col-xl-12 d-flex px-auto">
+                    
+                    <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/draw1.webp" class="img-fluid" alt="Sample image">
+                    
+                </div>
+                <div class="row">
+                    <div class="col-md-12 mt-md-0 mt-3">
+                        <label for="subject">Subject</label>
+                        <select id="subject" name="subject" required>
+                            {% for S in subjects %}
+                            <option value="{{S.id}}">{{S.subject_id.subject_name}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>    
+                </div>
+                <div class="d-flex justify-content-center ">
+                    <input type="hidden" name="mode" value="New">
+                    <button type="submit" class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 ">Take Attendance</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock main %}

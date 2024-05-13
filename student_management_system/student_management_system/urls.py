@@ -105,5 +105,15 @@ urlpatterns = [
     path('set-routine/', d_views.set_routine, name="setRoutine123"),
 
 
+
+    # Attendance
+
+    path('attendance/', d_views.take_attendance, name="take_attendance"),
+
+
+    path('attendance/<int:attendance_id>/', d_views.attendance, name="attendance"),
+
+
+
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)+static(settings.STATIC_URL,document_root=settings.STATIC_ROOT)

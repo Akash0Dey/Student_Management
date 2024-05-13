@@ -53,7 +53,7 @@ class Attendance(models.Model):
     objects = models.Manager()
 
     def __str__(self):
-        return self.attendance_date+" "+self.subject_id.subject_id.subject_name
+        return self.attendance_date.strftime("%Y-%m-%d %H:%M:%S")+" "+self.subject_id.subject_id.subject_name
 
 class AttendanceReport(models.Model):
     id=models.AutoField(primary_key=True)

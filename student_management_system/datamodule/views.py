@@ -677,3 +677,57 @@ def set_routine_view(request, semester_id, major_id):
             'subject': subjectTable
             }  # For initial load, no data
     return render(request, 'setTable.html', data)
+
+
+@login_required(login_url="/login")
+def take_attendance(request):
+
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user).first()
+
+    if request.method == "POST":
+        subject = request.POST["subject"]
+        sub = SubjectWithStaff.objects.get(id=subject)
+        attendance_id = Attendance.objects.create(subject_id=sub)
+        return redirect(reverse("attendance", args=(attendance_id.id,)))
+    else:
+
+        data = {
+            "user": User,
+            "usertype": usertypedata[int(user.user_type)],
+            'subjects': SubjectWithStaff.objects.filter(staff_id=User)
+            }  # For initial load, no data
+    return render(request, 'take_attendance.html', data)
+
+
+@login_required(login_url="/login")
+def attendance(request, attendance_id):
+
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user).first()
+
+    if request.method == "POST":
+        subject = request.POST["subject"]
+    else:
+        att = Attendance.objects.get(id=attendance_id)
+
+
+        data = {
+            "user": User,
+            "usertype": usertypedata[int(user.user_type)],
+            'attendance_id': att,
+            'students': Student.objects.filter(sem = att.subject_id.subject_id.semester_id, course_id=att.subject_id.subject_id.course_id)
+            }  # For initial load, no data
+    return render(request, 'attendance.html', data)
+
+
