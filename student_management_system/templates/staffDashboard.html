@@ -7,9 +7,9 @@
 {% block main %}
 
 <div class="row mx-auto">
-    <div class="col-xl-4 col-md-12 my-auto">
+    <div class="col-xl-6 col-md-12 my-auto row">
       <!-- Earnings (Monthly) Card Example -->
-      <div class="col-xl-12 col-md-6 mb-4">
+      <div class="col-xl-6 col-md-6 mb-4">
           <div class="card border-left-primary shadow h-100 py-2">
               <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -27,7 +27,7 @@
       </div>
     
       <!-- Earnings (Monthly) Card Example -->
-      <div class="col-xl-12 col-md-6 mb-4">
+      <div class="col-xl-6 col-md-6 mb-4">
           <div class="card border-left-success shadow h-100 py-2">
               <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -44,7 +44,7 @@
           </div>
       </div>
 
-      <div class="col-xl-12 col-md-6 mb-4">
+      <div class="col-xl-6 col-md-6 mb-4">
           <div class="card border-left-success shadow h-100 py-2">
               <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -62,7 +62,7 @@
       </div>
     
       <!-- Earnings (Monthly) Card Example -->
-      <div class="col-xl-12 col-md-6 mb-4">
+      <div class="col-xl-6 col-md-6 mb-4">
           <div class="card border-left-success shadow h-100 py-2">
               <div class="card-body">
                   <div class="row no-gutters align-items-center">
@@ -79,33 +79,74 @@
           </div>
       </div>
 
+      <div class="col-md-12 col-xl-12">
+          <div class="card dashboard-card-three mb-4">
+              <div class="card-body">
+                  <div class="heading-layout1">
+                      <div class="item-title">
+                          <h3 class="text-center">Students</h3>
+                      </div>
+                  </div>
+                  <!-- Canvas element for the pie chart -->
+                  <div class="doughnut-chart-wrap pt-3">
+                      <canvas id="student-doughnut-chart" width="400" height="400"></canvas>
+                  </div>
+                  <div class="student-report pt-3 row">
+                      <div class="student-count pseudo-bg-yellow col-6">
+                          <h4 class="item-title">Male Student : &ensp;</h4>
+                          <h4 class="item-number">{{ studentMale }}</h4>
+                      </div>
+                      <div class="student-count pseudo-bg-blue col-6">
+                          <h4 class="item-title">Female Student : &ensp;</h4>
+                          <h4 class="item-number">{{ studentFemale }}</h4>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
     </div>
 
-    <div class="col-md-12 col-xl-8">
-        <div class="card dashboard-card-three mb-4">
+    <div class="col-xl-6 col-md-12 text-center">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Confirm Student</h6>
+            </div>
             <div class="card-body">
-                <div class="heading-layout1">
-                    <div class="item-title">
-                        <h3 class="text-center">Students</h3>
-                    </div>
-                </div>
-                <!-- Canvas element for the pie chart -->
-                <div class="doughnut-chart-wrap pt-3">
-                    <canvas id="student-doughnut-chart" width="400" height="400"></canvas>
-                </div>
-                <div class="student-report row pt-3">
-                    <div class="student-count pseudo-bg-yellow m-auto row">
-                        <h4 class="item-title">Male Student : &ensp;</h4>
-                        <h4 class="item-number">{{ studentMale }}</h4>
-                    </div>
-                    <div class="student-count pseudo-bg-blue m-auto row">
-                        <h4 class="item-title">Female Student : &ensp;</h4>
-                        <h4 class="item-number">{{ studentFemale }}</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                          <tr>
+                            <th>Registration ID</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Email</th>
+                            <th>Course</th>
+                            <th>Semester</th>
+                            <th>Accept</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {% if NotStudent %}
+                            {% for i in NotStudent %}                
+                            <tr>
+                                <td>{{i.reg_id}}</th>
+                                <td>{{i.name}}</td>
+                                <td>{{i.gender}}</td>
+                                <td>{{i.email}}</td>
+                                <td>{{i.course_id.course_name}}</td>
+                                <td>{{i.sem.semester}}</td>
+                                <td><a href="{% url 'accept_student' student_id=i.id %}">Accept</a></td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                        </tbody>
+                      </table>
                     </div>
                 </div>
             </div>
-        </div>
+          
     </div>
+
 </div>
     
     <!-- JavaScript to initialize the pie chart -->
@@ -147,9 +188,7 @@
         
     </script>
 
-<div>
-    Request for Student acceptation
-</div>
+
 
 {% endblock main %}
 
@@ -163,5 +202,11 @@
 <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
 <script src="{% static 'js/calender.js' %}"></script>
 
-
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+</script>
 {% endblock js %}

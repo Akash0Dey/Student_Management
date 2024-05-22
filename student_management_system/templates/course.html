@@ -11,7 +11,7 @@
   </div>
   <div class="card-body">
       <div class="table-responsive">
-          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <table class="table table-bordered"  width="100%" cellspacing="0">
               <thead>
                   <tr>
                     <th>Course</th>
@@ -28,7 +28,7 @@
                             <strong>{{ semester }}</strong><br>
                             {% for subject in subjects %}
                                 &nbsp;{{ subject }}&nbsp;
-                            {% endfor %}
+                            {% endfor %}<br>
                         {% endfor %}
                     {% else %}
                         Could Not Fetch Subjects
@@ -50,9 +50,9 @@
 
 <!-- Page level custom scripts -->
 <script src="{% static 'js/demo/datatables-demo.js' %}"></script>
-<script>
+<!-- <script>
     $(document).ready(function() {
         $('#dataTable').DataTable();
     });
-</script>
+</script> -->
 {% endblock js %}

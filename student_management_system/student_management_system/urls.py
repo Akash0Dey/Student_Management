@@ -42,9 +42,19 @@ urlpatterns = [
 
     path('thank_you/', d_views.ThankYou, name="ThankYou"),
 
+    # Approval 
+
+    path('waiting/student', u_views.Student_approved, name="waiting_student"),
+
+    path('waiting/staff', u_views.Staff_approved, name="waiting_staff"),
+
+    path('waiting/HOD', u_views.HOD_approved, name="waiting_HOD"),
+
     # Student Side
 
     path('student/form', u_views.Student_Form, name="Student_Form"),
+
+    path('student/form/update', u_views.Student_update, name="Student_update"),
 
     path('student/List', d_views.Student_list, name="studentlist"),
 
@@ -56,6 +66,8 @@ urlpatterns = [
 
     path('staff/form', u_views.Staff_Form, name="Staff_Form"),
 
+    path('staff/form/update', u_views.Staff_update, name="Staff_update"),
+
     path('staff/list', d_views.Staff_list, name="stafflist"),
 
     path('staff/edit', d_views.Staff_Edit, name="staffEdit"),
@@ -65,6 +77,8 @@ urlpatterns = [
     # hod Side
 
     path('hod/form', u_views.hod_Form, name="hod_Form"),
+
+    path('hod/form/update', u_views.HOD_update, name="HOD_update"),
 
     path('hod/list', d_views.HOD_list, name="hodlist"),
     
@@ -110,8 +124,21 @@ urlpatterns = [
 
     path('attendance/', d_views.take_attendance, name="take_attendance"),
 
-
     path('attendance/<int:attendance_id>/', d_views.attendance, name="attendance"),
+
+    path('show_attendance/<int:attendance_id>/', d_views.show_attendance, name="show_attendance"),
+    
+    path('show_attendance/', d_views.show_attendance, name="showAttendance"),
+    
+    path('update_attendance/<int:attendance_id>/', d_views.attendance, name="update_attendance"),
+
+    # Accept User
+
+    path('Accept/student/<int:student_id>/', d_views.accept_student, name="accept_student"),
+
+    path('Accept/staff/<int:staff_id>/', d_views.accept_staff, name="accept_staff"),
+
+    path('Accept/hod/<int:hod_id>/', d_views.accept_hod, name="accept_hod"),
 
 
 

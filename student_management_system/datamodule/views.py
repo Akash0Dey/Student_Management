@@ -14,6 +14,17 @@ SEMdata = ["1st", "2nd", "3rd", "4th", "5th", "6th"]
 YEARdata = ["1st", "1st", "2nd", "2nd", "3rd", "3rd"]
 DEPTdata = ["CST", "EE", "ME", "ETC"]
 
+def check_approve(request):
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user).first()
+
+    return User.approved==False
+
 
 def get_str(object, objectlist):
     for ob in objectlist:
@@ -42,6 +53,8 @@ def ThankYou(request):
         User = Staff.objects.filter(staff=user).first()
     elif int(user.user_type) == 3:
         User = Student.objects.filter(student=user).first()
+    if check_approve(request):
+        return redirect("waiting_student")
     data = {
         "user": User,
         "usertype": usertypedata[int(user.user_type)]
@@ -53,16 +66,18 @@ def ThankYou(request):
 def Student_list(request):
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
+    if check_approve(request):
+        return redirect("waiting_student")
     data = {
         "user": User,
         "usertype": usertypedata[int(user.user_type)]
     }
-    data["studentTable"] =  Student.objects.all()
+    data["studentTable"] =  Student.objects.filter(approved=True)
     return render(request, "student.html", data) 
 
 
@@ -70,16 +85,18 @@ def Student_list(request):
 def Staff_list(request):
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
+    if check_approve(request):
+        return redirect("waiting_student")
     data = {
         "user": User,
         "usertype": usertypedata[int(user.user_type)]
     }
-    data["staffTable"] =  Staff.objects.all()
+    data["staffTable"] =  Staff.objects.filter(approved=True)
     return render(request, "staff.html", data) 
 
 
@@ -87,16 +104,18 @@ def Staff_list(request):
 def HOD_list(request):
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
+    if check_approve(request):
+        return redirect("waiting_student")
     data = {
         "user": User,
         "usertype": usertypedata[int(user.user_type)]
     }
-    data["HODTable"] =  HOD.objects.all()
+    data["HODTable"] =  HOD.objects.filter(approved=True)
     return render(request, "hod.html", data) 
 
 
@@ -104,18 +123,22 @@ def HOD_list(request):
 def HOD_Dashboard(request):
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
         return redirect("staffDashboard")
     elif int(user.user_type) == 3:
         return redirect("studentDashboard")
+    if check_approve(request):
+        return redirect("waiting_student")
     data = {
         "user": User, 
         "usertype": usertypedata[int(user.user_type)],
-        "studentNo": Student.objects.count(),
-        "studentMale": Student.objects.filter(gender="Male").count(),
-        "studentFemale": Student.objects.filter(gender="Female").count(),
-        "staffNo": Staff.objects.count(),
+        "NotStaff": Staff.objects.filter(approved=False),
+        "NotHOD": HOD.objects.filter(approved=False),
+        "studentNo": Student.objects.filter(approved=True).count(),
+        "studentMale": Student.objects.filter(gender="Male", approved=True).count(),
+        "studentFemale": Student.objects.filter(gender="Female", approved=True).count(),
+        "staffNo": Staff.objects.filter(approved=True).count(),
         "courseNo": Courses.objects.count(),
         "subjectNo": Subject.objects.count(),
         "courses": {(course.course_name, json.dumps([random.randint(40, 100) for _ in range(12)])) for course in Courses.objects.all()},
@@ -131,7 +154,7 @@ def Student_Dashboard(request):
     elif int(user.user_type) == 2:
         return redirect("staffDashboard")
     elif int(user.user_type) == 3:
-        student = Student.objects.filter(student=user).first()
+        student = Student.objects.filter(student=user, approved=True).first()
     data = {
         "user": student,
         "Sem": SEMdata, "Dept": DEPTdata,
@@ -145,10 +168,10 @@ def Student_Dashboard(request):
         "semester": student.sem.semester if student else "1st",
         "department": student.course_id.course_name if student else "CST",
         "usertype": usertypedata[int(user.user_type)],
-        "studentNo": Student.objects.count(),
-        "studentMale": Student.objects.filter(gender="Male").count(),
-        "studentFemale": Student.objects.filter(gender="Female").count(),
-        "staffNo": Staff.objects.count(),
+        "studentNo": Student.objects.filter(approved=True).count(),
+        "studentMale": Student.objects.filter(gender="Male", approved=True).count(),
+        "studentFemale": Student.objects.filter(gender="Female", approved=True).count(),
+        "staffNo": Staff.objects.filter(approved=True).count(),
         "courseNo": Courses.objects.count(),
         "subjectNo": Subject.objects.count(),
     }
@@ -157,33 +180,38 @@ def Student_Dashboard(request):
 
 @login_required(login_url="/login")
 def Staff_Dashboard(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
         return redirect("hodDashboard")
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
         return redirect("studentDashboard")
     data = {
         "user": User,
         "usertype": usertypedata[int(user.user_type)],
-        "studentNo": Student.objects.count(),
-        "studentMale": Student.objects.filter(gender="Male").count(),
-        "studentFemale": Student.objects.filter(gender="Female").count(),
-        "staffNo": Staff.objects.count(),
+        "studentNo": Student.objects.filter(approved=True).count(),
+        "studentMale": Student.objects.filter(gender="Male", approved=True).count(),
+        "studentFemale": Student.objects.filter(gender="Female", approved=True).count(),
+        "staffNo": Staff.objects.filter(approved=True).count(),
         "courseNo": Courses.objects.count(),
         "subjectNo": Subject.objects.count(),
+        "NotStudent": Student.objects.filter(approved=False),
     }
     return render(request, "staffDashboard.html", data) 
 
 
 @login_required(login_url="/login")
 def Student_Edit(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) != 3:
         return redirect("index")
     else:
-        student = Student.objects.filter(student=user).first()
+        student = Student.objects.filter(student=user, approved=True).first()
         if request.method == "POST":
 
             form_data = request.POST
@@ -227,11 +255,13 @@ def Student_Edit(request):
 
 @login_required(login_url="/login")
 def Staff_Edit(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) != 2:
         return redirect("index")
     else:
-        staff = Staff.objects.filter(staff=user).first()
+        staff = Staff.objects.filter(staff=user, approved=True).first()
         if request.method == "POST":
 
             form_data = request.POST
@@ -265,11 +295,13 @@ def Staff_Edit(request):
 
 @login_required(login_url="/login")
 def HOD_Edit(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) != 1:
         return redirect("index")
     else:
-        hod = HOD.objects.filter(hod=user).first()
+        hod = HOD.objects.filter(hod=user, approved=True).first()
 
         if request.method == "POST":
 
@@ -293,11 +325,13 @@ def HOD_Edit(request):
 
 @login_required(login_url="/login")
 def add_course(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) != 1:
         return redirect("index")
     else:
-        hod = HOD.objects.filter(hod=user).first()
+        hod = HOD.objects.filter(hod=user, approved=True).first()
     if request.method == 'POST':
         name = request.POST.get('Name')
         try:
@@ -318,13 +352,15 @@ def add_course(request):
 
 @login_required(login_url="/login")
 def Course_list(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
     courses = Courses.objects.all()
 
     # Prepare courseTable data
@@ -349,6 +385,8 @@ def Course_list(request):
 
                     course_data['subjects'][semester] = [subject.subject_id.subject_name]
 
+        course_data['subjects']= {semester: course_data['subjects'][semester] for semester in sorted(course_data['subjects'])}
+
         courseTable.append(course_data)
     data = {
         "user": User,
@@ -360,11 +398,13 @@ def Course_list(request):
 
 @login_required(login_url="/login")
 def add_subject(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) != 1:
         return redirect("index")
     else:
-        hod = HOD.objects.filter(hod=user).first()
+        hod = HOD.objects.filter(hod=user, approved=True).first()
 
     if request.method == 'POST':
         name = request.POST.get('Name')
@@ -393,13 +433,15 @@ def add_subject(request):
 
 @login_required(login_url="/login")
 def Subject_list(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
     subjects = Subject.objects.all()
 
@@ -422,13 +464,15 @@ def Subject_list(request):
 
 @login_required(login_url="/login")
 def SubjectStaff_list(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
     subjects = SubjectWithStaff.objects.all()
 
@@ -453,16 +497,18 @@ def SubjectStaff_list(request):
 
 @login_required(login_url="/login")
 def SubjectForTeacher(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) != 1:
         return redirect("index")
     else:
-        hod = HOD.objects.filter(hod=user).first()
+        hod = HOD.objects.filter(hod=user, approved=True).first()
     data = {
         "user": hod,
         "usertype": usertypedata[int(user.user_type)],
         "Subject": Subject.objects.all(),
-        "Staff": Staff.objects.all(),
+        "Staff": Staff.objects.filter(approved=True),
         "Session": Session.objects.all(),
     }
 
@@ -490,11 +536,13 @@ def SubjectForTeacher(request):
 
 @login_required(login_url="/login")
 def add_session(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) != 1:
         return redirect("index")
     else:
-        hod = HOD.objects.filter(hod=user).first()
+        hod = HOD.objects.filter(hod=user, approved=True).first()
 
     if request.method == 'POST':
         session_start_year = request.POST.get('session_start_year')
@@ -525,13 +573,15 @@ def add_session(request):
 
 @login_required(login_url="/login")
 def Session_list(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
     sessions = Session.objects.all()
 
@@ -546,18 +596,19 @@ def Session_list(request):
         "sessionTable": sessionTable,
     }  
     return render(request, 'sessionlist.html', data)  
-
-
+ 
 
 @login_required(login_url="/login")
 def timetable_view(request, semester_id, major_id):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
         # Get the selected semester and major
     semester = Semester.objects.get(id=semester_id)
@@ -580,16 +631,17 @@ def timetable_view(request, semester_id, major_id):
     return render(request, 'timetable.html', data)
 
 
-
 @login_required(login_url="/login")
 def routine(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
     data = {
         "user": User,
@@ -600,16 +652,17 @@ def routine(request):
     return render(request, 'routine.html', data)
 
 
-
 @login_required(login_url="/login")
 def set_routine(request):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
     data = {
         "user": User,
@@ -620,18 +673,17 @@ def set_routine(request):
     return render(request, 'set-routine.html', data)
 
 
-
-
-
 @login_required(login_url="/login")
 def set_routine_view(request, semester_id, major_id):
+    if check_approve(request):
+        return redirect("waiting_student")
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
         # Get the selected semester and major
     semester = Semester.objects.get(id=semester_id)
@@ -681,14 +733,16 @@ def set_routine_view(request, semester_id, major_id):
 
 @login_required(login_url="/login")
 def take_attendance(request):
+    if check_approve(request):
+        return redirect("waiting_student")
 
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
     if request.method == "POST":
         subject = request.POST["subject"]
@@ -707,27 +761,119 @@ def take_attendance(request):
 
 @login_required(login_url="/login")
 def attendance(request, attendance_id):
+    if check_approve(request):
+        return redirect("waiting_student")
 
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user).first()
+        User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user).first()
+        User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user).first()
+        User = Student.objects.filter(student=user, approved=True).first()
 
     if request.method == "POST":
-        subject = request.POST["subject"]
+        att = Attendance.objects.get(id=attendance_id)
+        for st in Student.objects.filter(sem = att.subject_id.subject_id.semester_id, course_id=att.subject_id.subject_id.course_id).order_by("reg_id"):
+            
+            if str(st.id) in request.POST:
+                Att = AttendanceReport.objects.get(attendance_id=att, student_id=st)
+                Att.status = True
+                Att.save()
+            else:
+                Att = AttendanceReport.objects.get(attendance_id=att, student_id=st)
+                Att.status = False
+                Att.save()
+
+        return redirect(reverse("show_attendance", args=(att.id, )))
+
     else:
         att = Attendance.objects.get(id=attendance_id)
 
+        if AttendanceReport.objects.filter(attendance_id=att).exists():
+
+            for st in Student.objects.filter(sem = att.subject_id.subject_id.semester_id, course_id=att.subject_id.subject_id.course_id).order_by("reg_id"):
+
+                AttendanceReport.objects.create(attendance_id=att, student_id=st, status=False)
 
         data = {
             "user": User,
             "usertype": usertypedata[int(user.user_type)],
-            'attendance_id': att,
-            'students': Student.objects.filter(sem = att.subject_id.subject_id.semester_id, course_id=att.subject_id.subject_id.course_id)
+            "student": AttendanceReport.objects.filter(attendance_id=att)
+            
             }  # For initial load, no data
+        
     return render(request, 'attendance.html', data)
+
+
+@login_required(login_url="/login")
+def show_attendance(request, attendance_id=None, student=None):
+    if check_approve(request):
+        return redirect("waiting_student")
+
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user, approved=True).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user, approved=True).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user, approved=True).first()
+
+    data = {
+        "user": User,
+        "usertype": usertypedata[int(user.user_type)],
+        "student": student
+    }
+
+    if attendance_id:
+
+        att = Attendance.objects.get(id=attendance_id)
+
+        data["attendance"] = AttendanceReport.objects.filter(attendance_id=att)#.order_by("student_id__reg_id")
+
+
+        return render(request, 'show_attendance.html', data)
+
+
+    else :
+
+        data ["attendances"] =[ (Att, max([ A.updated_at for A in AttendanceReport.objects.filter(attendance_id=Att)])) for Att in Attendance.objects.all().order_by("-attendance_date")]
+        data ["show"] =  True
+
+
+    return render(request, 'show_attendance.html', data)
+    
+
+
+@login_required(login_url="/login")
+def accept_student(request, student_id):
+    if request.user.user_type != 2:
+        return redirect("index") 
+    st = Student.objects.get(id=f'{student_id}', approved=True)
+    st.approved = True
+    st.save()
+    return redirect("index")
+
+
+@login_required(login_url="/login")
+def accept_staff(request, staff_id):
+    if request.user.user_type != 1:
+        return redirect("index") 
+    st = Staff.objects.get(id=f'{staff_id}', approved=True)
+    st.approved = True
+    st.save()
+    return redirect("index")
+
+
+@login_required(login_url="/login")
+def accept_hod(request, hod_id):
+    if request.user.user_type != 1:
+        return redirect("index") 
+    st = HOD.objects.get(id=f'{hod_id}', approved=True)
+    st.approved = True
+    st.save()
+    return redirect("index")
+
+
 
 

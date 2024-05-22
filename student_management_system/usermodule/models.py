@@ -49,7 +49,8 @@ class HOD(models.Model):
     hod=models.OneToOneField(CustomUser,on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=50, blank=True)
     email = models.EmailField(unique=True, blank=True)
-    verified = models.BooleanField(default=False)
+    approved = models.BooleanField(default=True)
+
 
     def __str__(self):
         return self.hod.username
@@ -73,8 +74,7 @@ class Staff(models.Model):
     phone = models.IntegerField()
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    verified = models.BooleanField(default=False)
-    approved_by = models.ForeignKey(HOD, on_delete=models.DO_NOTHING, null=True, blank=True)
+    approved = models.BooleanField(default=False)
     objects=models.Manager()
 
     def __str__(self):
@@ -105,11 +105,50 @@ class Student(models.Model):
     course_id=models.ForeignKey(Courses,on_delete=models.DO_NOTHING)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
-    approved_by = models.ForeignKey(HOD, on_delete=models.DO_NOTHING, null=True, blank=True)
+    approved = models.BooleanField(default=False)
     objects=models.Manager()
 
     def __str__(self):
         return self.name
+    
+
+
+class ApproveStudent(models.Model):
+
+    student = models.OneToOneField(Student, on_delete=models.DO_NOTHING)
+
+    by_staff = models.ForeignKey(Staff, on_delete=models.DO_NOTHING)
+    
+
+    def __str__(self):
+
+        return self.student + " Approved By "+self.by_staff
+
+
+
+class ApproveStaff(models.Model):
+
+    staff = models.OneToOneField(Staff, on_delete=models.DO_NOTHING)
+    
+    by_hod = models.ForeignKey(HOD, on_delete=models.DO_NOTHING)
+
+    def __str__(self):
+
+        return self.staff + " Approved By "+self.by_hod
+
+
+
+class ApproveHOD(models.Model):
+
+    hod = models.OneToOneField(HOD, on_delete=models.DO_NOTHING, related_name="approved_hod")
+
+    by_hod = models.ForeignKey(HOD, on_delete=models.DO_NOTHING, related_name="approver_hod")
+    
+
+    def __str__(self):
+
+        return self.hod + " Approved By "+self.by_hod
+
 
 
 # @receiver(post_save,sender=CustomUser)

@@ -1,0 +1,57 @@
+{% extends "base/base2.html" %}
+{% load static %}
+
+
+{% block title %}HOD List{% endblock title %}
+
+{% block main %}
+<div class="container">
+  <div class="fixed-top-right">
+    <a href="{% url 'logout' %}" class="btn btn-danger">Logout</a>
+</div>
+    <div class="wrapper rounded bg-white">
+<div class="card shadow mb-4">
+  <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold"><div class="text-danger">
+        Waiting for Approval From A HOD
+      </div></h6>
+  </div>
+  <div class="card-body">
+      <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+              <thead>
+                  <tr>
+                    <th class="col-1 text-center">Id</th>
+                    <th class="col-4 text-center">Name</th>
+                    <th class="col-5 text-center">Email</th>
+                    <th class="col-2 text-center">Action</th>
+                  </tr>
+                </thead>
+              <tbody>
+                {% if HOD %}              
+                  <tr>
+                    <td>{{HOD.id}}</td>
+                    <td>{{HOD.name}}</td>
+                    <td>{{HOD.email}}</td>
+                    <td><a class="dropdown-item" href="{% url 'HOD_update' %}">Edit</a></li>
+                            </div>
+                        </ul>
+                    </td>
+                  </tr>
+                {% endif %}
+                
+            </tbody>
+          </table>
+        </div>
+    </div>
+</div>
+    
+    </div>
+</div>
+
+{% endblock main %}
+
+{% block js %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+{% endblock js %}

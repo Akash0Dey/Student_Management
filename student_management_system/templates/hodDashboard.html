@@ -228,8 +228,77 @@
 
 
 </div>
-<div>
-    Request for staff acceptation
+<div class="row">
+    <div class="col-lg-6 col-md-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Confirm Staff</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                              <th>Name</th>
+                              <th>Gender</th>
+                              <th>Email</th>
+                              <th>Phone</th>
+                              <th>Action</th>
+                            </tr>
+                          </thead>
+                        <tbody>
+                          {% if NotStaff %}
+                            {% for i in NotStaff %}                
+                            <tr>
+                                <td>{{i.name}}</td>
+                                <td>{{i.gender}}</td>
+                                <td>{{i.email}}</td>
+                                <td>{{i.phone}}</td> 
+                                <td><a href="{% url 'accept_staff' staff_id=i.id %}">Accept</a></td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+              </div>
+          </div>
+    </div>
+    <div class="col-lg-6 col-md-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Confirm HOD</h6>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                              <th>Username</th>
+                              <th>Name</th>
+                              <th>Email</th>
+                              <th>Accept</th>
+                            </tr>
+                          </thead>
+                        <tbody>
+                          {% if NotHOD %}
+                            {% for i in NotHOD %}                
+                            <tr>
+                                <td>{{i.hod.username}}</td>
+                                <td>{{i.name}}</td>
+                                <td>{{i.email}}</td>
+                                <td><a href="{% url 'accept_staff' staff_id=i.id %}">Accept</a></td>
+                            </tr>
+                            {% endfor %}
+                        {% endif %}
+                      </tbody>
+                    </table>
+                  </div>
+              </div>
+          </div>
+          
+    </div>
+    
 </div>
 
 {% endblock main %}

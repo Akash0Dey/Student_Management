@@ -1,0 +1,126 @@
+{% extends 'base/base1.html' %}
+{% load static %}
+{% block title %}Take Attendance{% endblock title %}
+
+{% block main %}
+
+<div class="container">
+
+
+    {%  if show %}
+
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Attendances</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            
+                        <th class="col-2 text-center">Time</th>
+                            
+                        <th class="text-center col-2">Subject</th>
+                        
+                        <th class="text-center col-1">Course</th>
+                        
+                        <th class="text-center col-1">Semester</th>
+                        
+                        <th class="text-center col-2">Teacher</th>
+
+                        <th class="text-center col-2">Last Update</th>
+    
+                        <th class="col-2 text-center">Edit</th>
+    
+                        </tr>
+                      </thead>
+                    <tbody>
+                      {% if attendances %}
+                      {% for A in attendances %}
+                      <tr>
+                          <td class="text-center" style="font-size: 12px;">{{A.0.attendance_date}}</td>      
+
+                          <td class="text-center" colspan="3">{{A.0.subject_id.subject_id}}</td>       
+
+                          <td class="text-center">{{A.0.subject_id.staff_id}}</td>     
+
+                          <td class="text-center" style="font-size: 12px;">{{A.1}}</td>     
+
+                          <td class="text-center"><a href="{% url 'show_attendance' attendance_id=A.0.id %}">...</a></td>                  
+                          
+                      </tr>
+                      {% endfor %}
+                      {% endif %}
+                     </tbody>
+                </table>
+              </div>
+          </div>
+      </div>   
+
+    {% else %}
+
+    <div class="wrapper rounded bg-white mx-sm-auto">
+
+        <div class="h3 mb-5 row">
+            <ul class="list-unstyled">
+                <div class="row">
+
+                    <li class="col-10 me-auto mt-3 h4 sm-">
+                            {{attendance.0.attendance_id.subject_id.subject_id.subject_name}} {{attendance.0.attendance_id.attendance_date}}
+                    </li>
+                    <!-- <li class="nav-item dropdown no-arrow ms-auto col-2 text-right">
+                        <a class="nav-link dropdown-toggle" href="#" id="editDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                        aria-labelledby="editDropdown">
+                        <a class="dropdown-item" href="{% url 'update_attendance' attendance_id=attendance.0.attendance_id.id %}">Edit</a>
+                        </div>
+                    </li> -->
+                </div>
+            </ul>
+        </div>
+            
+        <form class="form"  enctype="multipart/form-data" method="post">
+            <div class="form-group">
+
+                {% csrf_token %}
+                {% include 'include/massage.html' %}
+                <div class="row">
+                {% for A in attendance %}
+                
+                    <div class="col-lg-6 col-md-6 col-sm-12 mt-md-0 mt-3">                          
+                        <div class="form-check form-switch form-check-reverse h6">
+                            <input class="form-check-input text-center mx-auto" type="checkbox" name="st_id-{{A.student_id}}" value="True" role="switch" id="toggleBtn{{A.student_id.id}}" {% if A.status %}checked{% endif %} disabled>
+                            <label class="form-check-label text-left h5 text-capitalize text-body-emphasis" for="toggleBtn{{A.student_id.id}}">{{A.student_id.name}}&ensp;-&ensp;{{A.student_id.reg_id|slice:"-4:"}}</label>
+                        </div>
+                    </div>    
+                {% endfor %}
+                    
+                </div>    
+                
+                <div class="d-flex justify-content-center ">
+                    <a class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 " href="{% url 'update_attendance' attendance_id=attendance.0.attendance_id.id %}">Edit</a>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    {% endif %}
+</div>
+{% endblock main %}
+
+
+{% block js %}
+<script src="{% static 'vendor/datatables/jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'vendor/datatables/dataTables.bootstrap4.min.js' %}"></script>
+
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#dataTable').DataTable();
+    });
+</script>
+{% endblock js %}

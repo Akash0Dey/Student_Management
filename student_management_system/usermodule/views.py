@@ -219,6 +219,7 @@ def hod_Form(request):
                 hod=request.user,
                 name=form_data["Name"],
                 email=form_data["Email"],
+                approved=False,
             )
         
             return redirect("ThankYou")  # Redirect to home page after successful registration/update
@@ -299,3 +300,225 @@ def Email_varification(request):
                 return redirect("Staff_Form")
             elif int(user.user_type) == 3:
                 return redirect("Student_Form")
+            
+
+
+@login_required(login_url="/login")
+def Student_approved(request):
+
+    user = request.user
+    if int(user.user_type) == 1:
+        return redirect("waiting_HOD")
+    elif int(user.user_type) == 2:
+        return redirect("waiting_staff")
+    elif int(user.user_type) == 3:
+        pass
+
+    User = Student.objects.filter(student=user).first()
+
+    data ={ 
+        'Student': User,
+    }
+    if User.approved:
+        return redirect("ThankYou")
+    else:
+        return render(request, "Student_wait.html", data)
+
+
+@login_required(login_url="/login")
+def Staff_approved(request):
+
+    user = request.user
+    if int(user.user_type) == 1:
+        return redirect("waiting_HOD")
+    elif int(user.user_type) == 2:
+        pass
+    elif int(user.user_type) == 3:
+        return redirect("waiting_student")
+    User = Staff.objects.filter(staff=user).first()
+
+    data ={ 
+        'Staff': User,
+    }
+    if User.approved:
+        return redirect("ThankYou")
+    else:
+        return render(request, "Staff_wait.html", data)
+
+
+@login_required(login_url="/login")
+def HOD_approved(request):
+
+    user = request.user
+    if int(user.user_type) == 1:
+        pass
+    elif int(user.user_type) == 2:
+        return redirect("waiting_staff")
+    elif int(user.user_type) == 3:
+        return redirect("waiting_student")
+    User = HOD.objects.filter(hod=user).first()
+
+    data ={ 
+        'HOD': User,
+    }
+    if User.approved:
+        return redirect("ThankYou")
+    else:
+        return render(request, "HOD_wait.html", data)
+
+
+@login_required(login_url="/login")
+def Student_update(request):
+
+    user = request.user
+    if int(user.user_type) == 1:
+        return redirect("HOD_update")
+    elif int(user.user_type) == 2:
+        return redirect("Staff_update")
+    elif int(user.user_type) == 3:
+        pass
+    student = Student.objects.filter(student=request.user).first()
+
+    if request.method == "POST":
+        form_data = request.POST
+        form_files = request.FILES
+
+        data = {"Sem": SEMdata, "Dept": DEPTdata,
+                "RegID":request.POST["regid"],
+                "Name":request.POST["Name"],
+                "DOB":request.POST["Birthday"],
+                "Gender":request.POST["Gender"],
+                "Phone":request.POST["PhoneNumber"],
+                "Email":request.POST["Email"],
+                "semester":request.POST["CurrentSemester"],
+                "department":request.POST["Major"], 
+            }
+        
+        try:
+            sem = Semester.objects.get(semester=form_data["CurrentSemester"])
+            dep = Courses.objects.get(course_name=form_data["Major"])
+        
+            # create a new student record
+                 
+            student.photo=form_files["Photo"]  if form_files.get("Photo") else student.photo
+            student.reg_id=form_data["regid"]
+            student.name=form_data["Name"]
+            student.dob=form_data["Birthday"]
+            student.gender=form_data["Gender"]
+            student.course_id=dep
+            student.sem=sem 
+            student.phone=form_data["PhoneNumber"] 
+            student.email=form_data["Email"]
+            student.save()
+        
+            return redirect("ThankYou")  # Redirect to home page after successful registration/update
+        except KeyError:
+            messages.error(request, "Fill Up Properly")
+        return render(request, "studentUpdate.html", data)
+    data = {
+        "Sem": SEMdata, "Dept": DEPTdata,
+        "photo": student.photo.url,
+        "RegID": student.reg_id ,
+        "Name": student.name ,
+        "DOB": student.dob ,
+        "Gender": student.gender ,
+        "Phone": student.phone ,
+        "Email": student.email ,
+        "semester": student.sem.semester ,
+        "department": student.course_id.course_name ,
+    }
+    return render(request, "studentUpdate.html", data)
+
+
+@login_required(login_url="/login")
+def Staff_update(request):
+
+    user = request.user
+    if int(user.user_type) == 1:
+        return redirect("HOD_update")
+    elif int(user.user_type) == 2:
+        pass
+    elif int(user.user_type) == 3:
+        return redirect("Student_update")
+    
+    staff = Staff.objects.filter(staff=request.user).first()
+    if request.method == "POST":
+        form_data = request.POST
+        form_files = request.FILES
+
+        data = {
+                "Name":request.POST["Name"],
+                "DOB":request.POST["Birthday"],
+                "Gender":request.POST["Gender"],
+                "Phone":request.POST["PhoneNumber"],
+                "Email":request.POST["Email"],
+            }
+        
+        try:
+        
+            # create a new Staff record
+            
+            staff.photo=form_files.get("Photo") if form_files.get("Photo") else staff.photo
+            staff.name=form_data["Name"]
+            staff.dob=form_data["Birthday"]
+            staff.gender=form_data["Gender"]
+            staff.phone=form_data["PhoneNumber"]
+            staff.email=form_data["Email"]
+            staff.save()
+        
+            return redirect("ThankYou")  # Redirect to home page after successful registration/update
+        except KeyError:
+            messages.error(request, "Fill Up Properly")
+        return render(request, "staffUpdate.html", data)
+    data = {
+            "photo": staff.photo.url,
+            "Name": staff.name ,
+            "DOB": staff.dob ,
+            "Gender": staff.gender ,
+            "Phone": staff.phone ,
+            "Email": staff.email ,
+            }
+    return render(request, "staffUpdate.html", data)
+
+
+
+@login_required(login_url="/login")
+def HOD_update(request):
+
+    user = request.user
+    if int(user.user_type) == 1:
+        pass
+    elif int(user.user_type) == 2:
+        return redirect("Staff_update")
+    elif int(user.user_type) == 3:
+        return redirect("Student_update")
+    
+    hod = HOD.objects.filter(hod=request.user).first()
+
+    if request.method == "POST":
+        form_data = request.POST
+
+        data = {"Name":request.POST["Name"],
+                "Email":request.POST["Email"], 
+            }
+        
+        try:
+
+            # create a new HOD record
+            
+            hod.name=form_data["Name"]
+            hod.email=form_data["Email"]
+            hod.save()
+        
+            return redirect("ThankYou")  # Redirect to home page after successful registration/update
+        except KeyError:
+            messages.error(request, "Fill Up Properly")
+        return render(request, "hodUpdate.html", data)
+    data = {
+        "Name":hod.name,
+        "Email":hod.email, 
+    }
+    return render(request, "hodUpdate.html", data)
+
+
+

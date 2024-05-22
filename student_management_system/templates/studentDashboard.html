@@ -53,11 +53,11 @@
                     <label for="Gender">Gender</label>
                     <div class="d-flex align-items-center mt-2">
                         <label class="option">
-                            <input type="radio" name="Gender" value="Male" {% if Gender == "Male" %} checked {% endif %}disabled>&ensp;&ensp;&ensp;&ensp;Male&ensp;&ensp;&ensp;&ensp;
+                            <input type="radio" name="Gender" value="Male" {% if Gender == "Male" %} checked {% endif %}disabled>&ensp;&ensp;&ensp;&ensp; Male &ensp;&ensp;&ensp;&ensp;
                             <span class="checkmark"></span>
                         </label>
                         <label class="option ms-4">
-                            <input type="radio" name="Gender" value="Female" {% if Gender == "Female" %} checked {% endif %}disabled>&ensp;&ensp;&ensp;&ensp;Female&ensp;&ensp;&ensp;&ensp;
+                            <input type="radio" name="Gender" value="Female" {% if Gender == "Female" %} checked {% endif %}disabled>&ensp;&ensp;&ensp;&ensp; Female &ensp;&ensp;&ensp;&ensp;
                             <span class="checkmark"></span>
                         </label>
                     </div>
@@ -179,11 +179,11 @@
                     <canvas id="student-doughnut-chart" width="400" height="400"></canvas>
                 </div>
                 <div class="student-report row pt-3">
-                    <div class="student-count pseudo-bg-yellow m-auto row">
+                    <div class="student-count pseudo-bg-yellow m-auto col-6">
                         <h4 class="item-title">Present : &ensp;</h4>
                         <h4 class="item-number">{{ studentMale }}</h4>
                     </div>
-                    <div class="student-count pseudo-bg-blue m-auto row">
+                    <div class="student-count pseudo-bg-blue m-auto col-6">
                         <h4 class="item-title">Absent : &ensp;</h4>
                         <h4 class="item-number">{{ studentFemale }}</h4>
                     </div>
