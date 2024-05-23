@@ -173,11 +173,11 @@
                     <canvas id="student-doughnut-chart" width="400" height="400"></canvas>
                 </div>
                 <div class="student-report row pt-3">
-                    <div class="student-count pseudo-bg-yellow m-auto row">
+                    <div class="student-count pseudo-bg-yellow m-auto col-5">
                         <h4 class="item-title">Male Student : &ensp;</h4>
                         <h4 class="item-number">{{ studentMale }}</h4>
                     </div>
-                    <div class="student-count pseudo-bg-blue m-auto row">
+                    <div class="student-count pseudo-bg-blue m-auto col-5">
                         <h4 class="item-title">Female Student : &ensp;</h4>
                         <h4 class="item-number">{{ studentFemale }}</h4>
                     </div>
@@ -232,11 +232,11 @@
     <div class="col-lg-6 col-md-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Confirm Staff</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Pending Staff Approvals</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                               <th>Name</th>
@@ -267,11 +267,11 @@
     <div class="col-lg-6 col-md-12">
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Confirm HOD</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Pending HOD Approvals</h6>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                               <th>Username</th>
@@ -287,7 +287,7 @@
                                 <td>{{i.hod.username}}</td>
                                 <td>{{i.name}}</td>
                                 <td>{{i.email}}</td>
-                                <td><a href="{% url 'accept_staff' staff_id=i.id %}">Accept</a></td>
+                                <td><a href="{% url 'accept_hod' hod_id=i.id %}">Accept</a></td>
                             </tr>
                             {% endfor %}
                         {% endif %}
@@ -313,5 +313,14 @@
 <script src="{% static 'js/demo/chart-pie-demo.js' %}"></script>
 <script src="{% static 'js/calender.js' %}"></script>
 
-
+<!-- Page level custom scripts -->
+<script src="{% static 'js/demo/datatables-demo.js' %}"></script>
+<script>
+    $(document).ready(function() {
+        $('#dataTable1').DataTable();
+    });
+    $(document).ready(function() {
+        $('#dataTable2').DataTable();
+    });
+</script>
 {% endblock js %}

@@ -122,7 +122,7 @@ class ApproveStudent(models.Model):
 
     def __str__(self):
 
-        return self.student + " Approved By "+self.by_staff
+        return f'{self.student} Approved By {self.by_staff}'
 
 
 
@@ -134,7 +134,7 @@ class ApproveStaff(models.Model):
 
     def __str__(self):
 
-        return self.staff + " Approved By "+self.by_hod
+        return f'{self.staff} Approved By {self.by_hod}'
 
 
 
@@ -147,7 +147,7 @@ class ApproveHOD(models.Model):
 
     def __str__(self):
 
-        return self.hod + " Approved By "+self.by_hod
+        return f'{self.hod} Approved By {self.by_hod}'
 
 
 

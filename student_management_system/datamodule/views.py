@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import random
 import json
-from usermodule.models import CustomUser,Student,Staff, Semester, HOD, Courses
+from usermodule.models import CustomUser,Student,Staff, Semester, HOD, Courses, ApproveHOD, ApproveStaff, ApproveStudent
 from datamodule.models import Attendance, AttendanceReport, Session, Subject, SubjectWithStaff, Routine, TimeSlot
 
 # Create your views here.
@@ -660,9 +660,9 @@ def set_routine(request):
     if int(user.user_type) == 1:
         User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user, approved=True).first()
+        return redirect("index")
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user, approved=True).first()
+        return redirect("index")
 
     data = {
         "user": User,
@@ -681,9 +681,9 @@ def set_routine_view(request, semester_id, major_id):
     if int(user.user_type) == 1:
         User = HOD.objects.filter(hod=user, approved=True).first()
     elif int(user.user_type) == 2:
-        User = Staff.objects.filter(staff=user, approved=True).first()
+        return redirect("index")
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user, approved=True).first()
+        return redirect("index")
 
         # Get the selected semester and major
     semester = Semester.objects.get(id=semester_id)
@@ -738,11 +738,11 @@ def take_attendance(request):
 
     user = request.user
     if int(user.user_type) == 1:
-        User = HOD.objects.filter(hod=user, approved=True).first()
+        return redirect("index")
     elif int(user.user_type) == 2:
         User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user, approved=True).first()
+        return redirect("index")
 
     if request.method == "POST":
         subject = request.POST["subject"]
@@ -770,17 +770,21 @@ def attendance(request, attendance_id):
     elif int(user.user_type) == 2:
         User = Staff.objects.filter(staff=user, approved=True).first()
     elif int(user.user_type) == 3:
-        User = Student.objects.filter(student=user, approved=True).first()
+        return redirect("index")
 
     if request.method == "POST":
         att = Attendance.objects.get(id=attendance_id)
         for st in Student.objects.filter(sem = att.subject_id.subject_id.semester_id, course_id=att.subject_id.subject_id.course_id).order_by("reg_id"):
             
             if str(st.id) in request.POST:
+                if not AttendanceReport.objects.filter(attendance_id=att, student_id=st).exists():
+                    AttendanceReport.objects.create(attendance_id=att, student_id=st, status=False)
                 Att = AttendanceReport.objects.get(attendance_id=att, student_id=st)
                 Att.status = True
                 Att.save()
             else:
+                if not AttendanceReport.objects.filter(attendance_id=att, student_id=st).exists():
+                    AttendanceReport.objects.create(attendance_id=att, student_id=st, status=False)
                 Att = AttendanceReport.objects.get(attendance_id=att, student_id=st)
                 Att.status = False
                 Att.save()
@@ -790,11 +794,12 @@ def attendance(request, attendance_id):
     else:
         att = Attendance.objects.get(id=attendance_id)
 
-        if AttendanceReport.objects.filter(attendance_id=att).exists():
+        if not AttendanceReport.objects.filter(attendance_id=att).count()==AttendanceReport.objects.filter(attendance_id=att).count():
 
             for st in Student.objects.filter(sem = att.subject_id.subject_id.semester_id, course_id=att.subject_id.subject_id.course_id).order_by("reg_id"):
 
-                AttendanceReport.objects.create(attendance_id=att, student_id=st, status=False)
+                if not AttendanceReport.objects.filter(attendance_id=att, student_id=st).exists():
+                    AttendanceReport.objects.create(attendance_id=att, student_id=st, status=False)
 
         data = {
             "user": User,
@@ -847,31 +852,35 @@ def show_attendance(request, attendance_id=None, student=None):
 
 @login_required(login_url="/login")
 def accept_student(request, student_id):
-    if request.user.user_type != 2:
-        return redirect("index") 
-    st = Student.objects.get(id=f'{student_id}', approved=True)
-    st.approved = True
-    st.save()
+    if Staff.objects.filter(staff=request.user, approved=True).exists():
+        st = Student.objects.get(id=student_id)
+        st.approved = True
+        st.save()
+        staff = Staff.objects.filter(staff=request.user, approved=True).first()
+        ApproveStudent.objects.create(student=st, by_staff=staff)
     return redirect("index")
 
 
 @login_required(login_url="/login")
 def accept_staff(request, staff_id):
-    if request.user.user_type != 1:
-        return redirect("index") 
-    st = Staff.objects.get(id=f'{staff_id}', approved=True)
-    st.approved = True
-    st.save()
+    if HOD.objects.filter(hod=request.user, approved=True).exists():
+        st = Staff.objects.get(id=staff_id)
+        st.approved = True
+        st.save()
+        hod = HOD.objects.filter(hod=request.user, approved=True).first()
+        ApproveStaff.objects.create(staff=st, by_hod=hod)
     return redirect("index")
 
 
 @login_required(login_url="/login")
 def accept_hod(request, hod_id):
-    if request.user.user_type != 1:
-        return redirect("index") 
-    st = HOD.objects.get(id=f'{hod_id}', approved=True)
-    st.approved = True
-    st.save()
+    if HOD.objects.filter(hod=request.user, approved=True).exists():
+        hod = HOD.objects.get(id=hod_id)
+        hod.approved = True
+        hod.save()
+        hod = HOD.objects.get(id=hod_id)
+        by_hod = HOD.objects.filter(hod=request.user, approved=True).first()
+        ApproveHOD.objects.create(hod=hod, by_hod=by_hod)
     return redirect("index")
 
 

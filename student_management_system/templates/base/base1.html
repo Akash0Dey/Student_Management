@@ -81,6 +81,8 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
+            {% if usertype == "HOD"  %}
+
             <!-- Nav Item - Pages Collapse Menu -->
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
@@ -95,10 +97,8 @@
                         <a class="collapse-item" href="{% url 'hodEdit' %}">HOD Edit</a>
                         <h6 class="collapse-header">Staff:</h6>
                         <a class="collapse-item" href="{% url 'stafflist' %}">Staff List</a>
-                        <a class="collapse-item" href="{% url 'staffEdit' %}">Staff Edit</a>
                         <h6 class="collapse-header">Student:</h6>
                         <a class="collapse-item" href="{% url 'studentlist' %}">Student List</a>
-                        <a class="collapse-item" href="{% url 'studentEdit' %}">Student Edit</a>
                         
                     </div>
                 </div>
@@ -236,6 +236,184 @@
                 <div id="collapsesix" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
                         <h6 class="collapse-header">Attendance VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'showAttendance' %}">View Attendances</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                AUTHENTICATION
+            </div>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
+                    aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>User Pages</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="login.html">Login</a>
+                        <a class="collapse-item" href="register.html">Register</a>
+                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                    </div>
+                </div>
+            </li>
+
+
+            {% elif usertype == "Staff"  %}
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Users</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">HOD:</h6>
+                        <a class="collapse-item" href="{% url 'hodlist' %}">HOD List</a>
+                        <h6 class="collapse-header">Staff:</h6>
+                        <a class="collapse-item" href="{% url 'stafflist' %}">Staff List</a>
+                        <a class="collapse-item" href="{% url 'staffEdit' %}">Staff Edit</a>
+                        <h6 class="collapse-header">Student:</h6>
+                        <a class="collapse-item" href="{% url 'studentlist' %}">Student List</a>
+                        
+                    </div>
+                </div>
+            </li>
+            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
+                    aria-expanded="true" aria-controls="collapseThree">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Staff</span>
+                </a>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Staff VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'stafflist' %}">Staff List</a>
+                        <a class="collapse-item" href="{% url 'staffEdit' %}">Staff Edit</a>
+                    </div>
+                </div>
+            </li> -->
+            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
+                    aria-expanded="true" aria-controls="collapseFour">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Student</span>
+                </a>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Student VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'studentlist' %}">Student List</a>
+                        <a class="collapse-item" href="{% url 'studentEdit' %}">Student Edit</a>
+                    </div>
+                </div>
+            </li> -->
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Course -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFive"
+                    aria-expanded="true" aria-controls="collapseFive">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Course</span>
+                </a>
+                <div id="collapseFive" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Course VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'Courselist' %}">Course List</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Subject -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSix"
+                    aria-expanded="true" aria-controls="collapseSix">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Subject</span>
+                </a>
+                <div id="collapseSix" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Subject VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'Subjectlist' %}">Subject List</a>
+                        <a class="collapse-item" href="{% url 'SubjectStafflist' %}">Session Subject List</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Session -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSeven"
+                    aria-expanded="true" aria-controls="collapseSeven">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Session</span>
+                </a>
+                <div id="collapseSeven" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Session VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'Sessionlist' %}">Session List</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse1"
+                    aria-expanded="true" aria-controls="collapse1">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Time Table</span>
+                </a>
+                <div id="collapse1" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item text-center" href="{% url 'routine123' %}">Routine</a>
+                    </div>
+                </div>
+            </li>
+<!-- 
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse2"
+                    aria-expanded="true" aria-controls="collapse2">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Time Table</span>
+                </a>
+                <div id="collapse2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item text-center" href="{% url 'setRoutine123' %}">Set Routine</a>
+                    </div>
+                </div>
+            </li> -->
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Heading -->
+            <!-- <div class="sidebar-heading">
+                ATTENDENCE
+            </div> -->
+
+             <!-- Subject -->
+             <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsesix"
+                    aria-expanded="true" aria-controls="collapsesix">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>ATTENDANCE</span>
+                </a>
+                <div id="collapsesix" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Attendance VIEWS:</h6>
                         <a class="collapse-item" href="{% url 'take_attendance' %}">Take Attendance</a>
                         <a class="collapse-item" href="{% url 'showAttendance' %}">View Attendances</a>
                     </div>
@@ -267,6 +445,184 @@
                 </div>
             </li>
 
+
+            {% elif usertype == "Student"  %}
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
+                    aria-expanded="true" aria-controls="collapseTwo">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Users</span>
+                </a>
+                <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">HOD:</h6>
+                        <a class="collapse-item" href="{% url 'hodlist' %}">HOD List</a>
+                        <h6 class="collapse-header">Staff:</h6>
+                        <a class="collapse-item" href="{% url 'stafflist' %}">Staff List</a>
+                        <a class="collapse-item" href="{% url 'staffEdit' %}">Staff Edit</a>
+                        <h6 class="collapse-header">Student:</h6>
+                        <a class="collapse-item" href="{% url 'studentlist' %}">Student List</a>
+                        
+                    </div>
+                </div>
+            </li>
+            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseThree"
+                    aria-expanded="true" aria-controls="collapseThree">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Staff</span>
+                </a>
+                <div id="collapseThree" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Staff VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'stafflist' %}">Staff List</a>
+                        <a class="collapse-item" href="{% url 'staffEdit' %}">Staff Edit</a>
+                    </div>
+                </div>
+            </li> -->
+            <!-- Nav Item - Pages Collapse Menu -->
+            <!-- <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFour"
+                    aria-expanded="true" aria-controls="collapseFour">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Student</span>
+                </a>
+                <div id="collapseFour" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Student VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'studentlist' %}">Student List</a>
+                        <a class="collapse-item" href="{% url 'studentEdit' %}">Student Edit</a>
+                    </div>
+                </div>
+            </li> -->
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Course -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseFive"
+                    aria-expanded="true" aria-controls="collapseFive">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Course</span>
+                </a>
+                <div id="collapseFive" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Course VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'Courselist' %}">Course List</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Subject -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSix"
+                    aria-expanded="true" aria-controls="collapseSix">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Subject</span>
+                </a>
+                <div id="collapseSix" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Subject VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'Subjectlist' %}">Subject List</a>
+                        <a class="collapse-item" href="{% url 'SubjectStafflist' %}">Session Subject List</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Session -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSeven"
+                    aria-expanded="true" aria-controls="collapseSeven">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Session</span>
+                </a>
+                <div id="collapseSeven" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Session VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'Sessionlist' %}">Session List</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse1"
+                    aria-expanded="true" aria-controls="collapse1">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Time Table</span>
+                </a>
+                <div id="collapse1" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item text-center" href="{% url 'routine123' %}">Routine</a>
+                    </div>
+                </div>
+            </li>
+<!-- 
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapse2"
+                    aria-expanded="true" aria-controls="collapse2">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>Time Table</span>
+                </a>
+                <div id="collapse2" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item text-center" href="{% url 'setRoutine123' %}">Set Routine</a>
+                    </div>
+                </div>
+            </li> -->
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+            <!-- Heading -->
+            <!-- <div class="sidebar-heading">
+                ATTENDENCE
+            </div> -->
+
+             <!-- Subject -->
+             <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsesix"
+                    aria-expanded="true" aria-controls="collapsesix">
+                    <i class="fas fa-fw fa-cog"></i>
+                    <span>ATTENDANCE</span>
+                </a>
+                <div id="collapsesix" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Attendance VIEWS:</h6>
+                        <a class="collapse-item" href="{% url 'showAttendance' %}">View Attendances</a>
+                    </div>
+                </div>
+            </li>
+
+            <!-- Divider -->
+            <hr class="sidebar-divider">
+
+            <!-- Heading -->
+            <div class="sidebar-heading">
+                AUTHENTICATION
+            </div>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages" aria-expanded="true"
+                    aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>User Pages</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
+                    data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" href="login.html">Login</a>
+                        <a class="collapse-item" href="register.html">Register</a>
+                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
+                    </div>
+                </div>
+            </li>
+            {% endif %}
             <!-- Divider -->
             <hr class="sidebar-divider d-none d-md-block">
 
