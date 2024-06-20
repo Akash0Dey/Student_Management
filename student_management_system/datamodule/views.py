@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 import random
 import json
+import os
 from usermodule.models import CustomUser,Student,Staff, Semester, HOD, Courses, ApproveHOD, ApproveStaff, ApproveStudent
 from datamodule.models import Attendance, AttendanceReport, Session, Subject, SubjectWithStaff, Routine, TimeSlot
 
@@ -53,6 +54,8 @@ def ThankYou(request):
         User = Staff.objects.filter(staff=user).first()
     elif int(user.user_type) == 3:
         User = Student.objects.filter(student=user).first()
+        if user.username not in os.listdir('static/Student'):
+            return redirect("snapshot")
     if check_approve(request):
         return redirect("waiting_student")
     data = {

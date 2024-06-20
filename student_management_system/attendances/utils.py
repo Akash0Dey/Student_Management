@@ -17,8 +17,6 @@ datetoday2 = date.today().strftime("%d-%B-%Y")
 HAARCASCADE_PATH = os.path.join(os.path.join(BASE_DIR, 'attendances', 'haarcascade_frontalface_default.xml'))
 face_detector = cv2.CascadeClassifier(HAARCASCADE_PATH)
 
-imgBackground = cv2.imread(os.path.join(BASE_DIR, 'static', 'image', 'background.png'))
-
 def totalreg():
     return Student.objects.count()
 
@@ -61,34 +59,3 @@ def train_model():
     knn.fit(faces, labels)
     joblib.dump(knn, 'static/face_recognition_model.pkl')
 
-def extract_attendance():
-    if not os.path.exists(attendance_file_path):
-        # If the file does not exist, create it with headers
-        with open(attendance_file_path, 'w') as f:
-            f.write('Name,Roll,Time\n')
-        # Return an empty dataframe and length 0
-        return pd.DataFrame(columns=['Name', 'Roll', 'Time']), 0
-    df = pd.read_csv(attendance_file_path)
-    names = df['Name']
-    rolls = df['Roll']
-    times = df['Time']
-    l = len(df)
-    return names, rolls, times, l
-
-def add_attendance(name):
-    if not os.path.exists(attendance_file_path):
-        # If the file does not exist, create it with headers
-        with open(attendance_file_path, 'w') as f:
-            f.write('Name,Roll,Time\n')
-        # Return an empty dataframe and length 0
-        return pd.DataFrame(columns=['Name', 'Roll', 'Time']), 0
-    
-    df = pd.read_csv(f'Attendance/Attendance-{datetoday}.csv')
-    username = name.split('_')[0]
-    userid = name.split('_')[1]
-    current_time = datetime.now().strftime("%H:%M:%S")
-
-
-    if int(userid) not in list(df['Roll']):
-        with open(f'Attendance/Attendance-{datetoday}.csv', 'a') as f:
-            f.write(f'\n{username},{userid},{current_time}')

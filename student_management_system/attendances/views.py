@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from .utils import train_model, extract_attendance, totalreg, extract_faces, add_attendance, imgBackground, identify_face
+from .utils import train_model, totalreg, extract_faces, identify_face
 from django.views.decorators.csrf import csrf_exempt
 import os
 import cv2
