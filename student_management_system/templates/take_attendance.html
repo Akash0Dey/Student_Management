@@ -8,7 +8,7 @@
 
     <div class="wrapper rounded bg-white">
         <div class="h3">New Subject</div>
-        <form class="form"  enctype="multipart/form-data" method="post">
+        <form class="form" id="attendance" enctype="multipart/form-data" method="post">
             <div class="form-group">
 
                 {% csrf_token %}
@@ -28,12 +28,24 @@
                         </select>
                     </div>    
                 </div>
-                <div class="d-flex justify-content-center ">
-                    <input type="hidden" name="mode" value="New">
-                    <button type="submit" class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 ">Take Attendance</button>
+                <div class="d-flex justify-content-center row">
+                    <input type="hidden" id="mode" name="mode" value="">
+                    <button type="button" onclick="modeChange('manual')" class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 col-lg-5 col-10 mx-auto">Take Manual Attendance</button>
+                    <button type="button" onclick="modeChange('video')" class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 col-lg-5 col-10 mx-auto">Take Video Attendance</button>
                 </div>
             </div>
         </form>
     </div>
 </div>
 {% endblock main %}
+
+
+{% block js %}
+
+<script>
+    function modeChange(action) {
+        document.getElementById('mode').value = action;
+        document.getElementById('attendance').submit();
+    }
+</script>
+{% endblock js %}

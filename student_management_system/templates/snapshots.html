@@ -1,0 +1,97 @@
+{% extends "base/base2.html" %}
+
+{% block title %}Snapshot{% endblock title %} 
+
+
+{% block main %}
+<div class="container">
+
+    <div class="wrapper rounded bg-white">
+        <div class="h3 mb-5">Snapshot For Register</div>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="d-flex justify-content-center">
+                <video id="video" class="p-1 bg-secondary img-fluid" autoplay style="display: none;"></video>
+            </div>
+            <div class="d-flex justify-content-center my-3">
+                <button type="button" onclick="takeSnapshot()" class="btn btn-dark" style="display: none;">Take Snapshot</button>
+                <canvas id="canvas" width="300" height="300" style="display: none;"></canvas>
+            </div>
+            
+            <div id="snapshots" style="display: flex; flex-wrap: wrap; gap: 10px;" class="p-1"></div>
+            <input type="hidden" id="imageData" name="imageData">
+            <input type="hidden" id="imageCount" name="imageCount" value="0">
+            
+            <div class="d-flex justify-content-center ">
+                <button type="submit" class="btn btn-dark" style="display: none;">Upload Images</button>
+            </div>
+            <div class="d-flex justify-content-center my-3">
+                <button type="button" onclick="startCamera()" class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 ">Start Video</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock main %}
+
+{% block js %}
+<script>
+let video = document.getElementById('video');
+let canvas = document.getElementById('canvas');
+let imageCount = 0;
+
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+            video.style.display = 'block';
+            video.srcObject = stream;
+            video.play();
+            document.querySelector("button[onclick='takeSnapshot()']").style.display = 'inline';
+        })
+        .catch(function(err) {
+            console.log("An error occurred: " + err);
+        });
+}
+
+function takeSnapshot() {
+    if (imageCount < 10) {
+        canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+        let imageData = canvas.toDataURL('image/png');
+        let imageInput = document.getElementById('imageData');
+        imageInput.value += imageData + '^';  // Append each image data to the hidden input
+
+        // Create a new img element and add it to the snapshots div
+        let div = document.createElement('div');
+        div.classList.add('div-img');  // Add the class
+        div.classList.add('p-1');  // Add the class
+        div.classList.add('bg-primary');  // Add the class
+        div.classList.add('mx-auto');  // Add the class
+        div.classList.add('rounded');  // Add the class
+        div.classList.add('d-block');  // Add the class
+        div.classList.add('col-lg-2');  // Add the class
+        div.classList.add('col-md-3');  // Add the class
+        div.classList.add('col-sm-5');  // Add the class
+        div.classList.add('col-5');  // Add the class
+        document.getElementById('snapshots').appendChild(div);
+        let img = document.createElement('img');
+        img.src = imageData;
+        img.style.width = '99%';
+        img.style.height = 'auto';  // Add the class
+        div.appendChild(img);
+
+
+        imageCount += 1;
+        document.getElementById('imageCount').value = imageCount;
+
+        if (imageCount === 10) {
+            video.style.display = 'none';
+            document.querySelector("button[onclick='takeSnapshot()']").style.display = 'none';
+            document.querySelector("button[type='submit']").style.display = 'inline';
+            document.getElementById('uploadMessage').innerText = '10 images captured. You can now upload them.';
+        } else {
+            document.getElementById('uploadMessage').innerText = `${imageCount}/10 images captured.`;
+        }
+    }
+}
+</script>
+{% endblock js %}

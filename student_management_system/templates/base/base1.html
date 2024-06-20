@@ -87,7 +87,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     <span>Users</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -259,7 +259,10 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="login.html">Login</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}" data-toggle="modal" data-target="#logoutModal">
+                            <!-- onclick=confirmLogot()> -->
+                        Logout
+                        </a>
                         <a class="collapse-item" href="register.html">Register</a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                     </div>
@@ -272,7 +275,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     <span>Users</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -438,7 +441,10 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="login.html">Login</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}" data-toggle="modal" data-target="#logoutModal">
+                            <!-- onclick=confirmLogot()> -->
+                          Logout
+                        </a>
                         <a class="collapse-item" href="register.html">Register</a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                     </div>
@@ -451,7 +457,7 @@
             <li class="nav-item">
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
                     aria-expanded="true" aria-controls="collapseTwo">
-                    <i class="fas fa-fw fa-cog"></i>
+                    <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-400"></i>
                     <span>Users</span>
                 </a>
                 <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
@@ -616,7 +622,10 @@
                 <div id="collapsePages" class="collapse" aria-labelledby="headingPages"
                     data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <a class="collapse-item" href="login.html">Login</a>
+                        <a class="dropdown-item" href="{% url 'logout' %}" data-toggle="modal" data-target="#logoutModal">
+                            <!-- onclick=confirmLogot()> -->
+                        Logout
+                        </a>
                         <a class="collapse-item" href="register.html">Register</a>
                         <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
                     </div>

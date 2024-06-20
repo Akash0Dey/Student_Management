@@ -1,0 +1,104 @@
+{% extends "base/base1.html" %}
+
+{% block title %}Video Attendance{% endblock title %} 
+
+
+{% block main %}
+<div class="container">
+
+    <div class="wrapper rounded bg-white">
+        <div class="h3 mb-5">Snapshot For Register</div>
+
+        <div class="h5 mb-3">{{attend}}</div>
+        <div class="d-flex justify-content-center" id="videoContainer">
+            <video id="video" class="p-1 bg-secondary img-fluid" autoplay style="display: none;"></video>
+        </div>
+        <canvas id="canvas" width="300" height="300" style="display: none;"></canvas>
+        <div class="d-flex justify-content-center my-3">
+            <button type="button" onclick="startCamera()"  class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 ">Start Video</button>
+        </div>
+        <div class="d-flex justify-content-center my-3">
+            <button type="button" onclick="startAttendance()" style="display: none;" class="btn btn-primary mt-3 btn-block btn-lg gradient-custom-4 ">Start Attendance</button>
+        </div>
+        <div class="row student-success my-3">
+            {% for S in student %}
+            
+                <div class="col-lg-6 col-md-6 col-sm-12 mt-md-0 mt-3">                          
+                    <div class="form-check form-switch form-check-reverse h6">
+                        <input class="form-check-input text-center mx-auto" type="checkbox" name="{{S.student_id.id}}" value="True" role="switch" id="toggleBtn{{S.student_id.id}}" {% if S.status %}checked{% endif %}>
+                        <label class="form-check-label text-left h5 text-capitalize" for="toggleBtn{{S.student_id.id}}">{{S.student_id.name}}&ensp;-&ensp;{{S.student_id.reg_id|slice:"-4:"}}</label>
+                    </div>
+                </div>    
+            {% endfor %}
+                
+        </div>  
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="d-flex justify-content-center my-3">
+                <button type="submit" id="endAttendance" class="btn btn-dark mt-3 btn-block btn-lg gradient-custom-4 " style="display: none;">End Attendance</button>
+            </div>   
+        </form>   
+    </div>
+</div>
+
+{% endblock main %}
+
+{% block js %}
+  <script>
+            let video = document.getElementById('video');
+            let canvas = document.getElementById('canvas');
+            let context = canvas.getContext('2d');
+            let endAttendance = document.getElementById('endAttendance');
+            let attendanceStarted = false;
+    
+            function startCamera() {
+                navigator.mediaDevices.getUserMedia({ video: true })
+                    .then(function(stream) {
+                        document.querySelector("button[onclick='startCamera()']").style.display = 'none';
+                        video.style.display = 'block';
+                        video.srcObject = stream;
+                        video.play();
+                        document.querySelector("button[onclick='startAttendance()']").style.display = 'inline';
+                    })
+                    .catch(function(err) {
+                        console.log("An error occurred: " + err);
+                    });
+            }
+    
+            function startAttendance() {
+                if (!attendanceStarted) {
+                    document.querySelector("button[onclick='startAttendance()']").style.display = 'none';
+                    endAttendance.style.display = 'inline';
+                    attendanceStarted = true;
+                    canvas.width = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    setInterval(captureFrame, 1000);  // Capture a frame every second
+                }
+            }
+    
+            function captureFrame() {
+                canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+                let imageData = canvas.toDataURL('image/png');
+                fetch("{% url 'process_frame' attendance_id=attend.id %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ image: imageData })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        let checkbox = document.getElementById('toggleBtn' + data.person.id);
+                        if (checkbox) {
+                            checkbox.checked = true;
+                        }
+                    } else {
+                        console.log('No face detected');
+                    }
+                });
+            }
+    
+        </script>
+{% endblock js %}

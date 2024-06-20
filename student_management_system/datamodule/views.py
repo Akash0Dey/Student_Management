@@ -158,15 +158,15 @@ def Student_Dashboard(request):
     data = {
         "user": student,
         "Sem": SEMdata, "Dept": DEPTdata,
-        "photo": student.photo.url if student else "",
-        "RegID": student.reg_id if student else "",
-        "Name": student.name if student else "",
-        "DOB": student.dob if student else "",
-        "Gender": student.gender if student else "Male",
-        "Phone": student.phone if student else "",
-        "Email": student.email if student else "",
-        "semester": student.sem.semester if student else "1st",
-        "department": student.course_id.course_name if student else "CST",
+        "photo": student.photo.url ,
+        "RegID": student.reg_id ,
+        "Name": student.name ,
+        "DOB": student.dob ,
+        "Gender": student.gender ,
+        "Phone": student.phone ,
+        "Email": student.email ,
+        "semester": student.sem.semester,
+        "department": student.course_id.course_name ,
         "usertype": usertypedata[int(user.user_type)],
         "studentNo": Student.objects.filter(approved=True).count(),
         "studentMale": Student.objects.filter(gender="Male", approved=True).count(),
@@ -748,7 +748,10 @@ def take_attendance(request):
         subject = request.POST["subject"]
         sub = SubjectWithStaff.objects.get(id=subject)
         attendance_id = Attendance.objects.create(subject_id=sub)
-        return redirect(reverse("attendance", args=(attendance_id.id,)))
+        if request.POST["mode"] == "manual":
+            return redirect(reverse("attendance", args=(attendance_id.id,)))
+        if request.POST["mode"] == "video":
+            return redirect(reverse("video_attendance", args=(attendance_id.id,)))
     else:
 
         data = {
@@ -794,7 +797,7 @@ def attendance(request, attendance_id):
     else:
         att = Attendance.objects.get(id=attendance_id)
 
-        if not AttendanceReport.objects.filter(attendance_id=att).count()==AttendanceReport.objects.filter(attendance_id=att).count():
+        if not AttendanceReport.objects.filter(attendance_id=att).count():
 
             for st in Student.objects.filter(sem = att.subject_id.subject_id.semester_id, course_id=att.subject_id.subject_id.course_id).order_by("reg_id"):
 
@@ -884,5 +887,50 @@ def accept_hod(request, hod_id):
     return redirect("index")
 
 
+@login_required(login_url="/login")
+def monthly_attendance(request):
+    if check_approve(request):
+        return redirect("waiting_student")
+
+    user = request.user
+    if int(user.user_type) == 1:
+        User = HOD.objects.filter(hod=user, approved=True).first()
+    elif int(user.user_type) == 2:
+        User = Staff.objects.filter(staff=user, approved=True).first()
+    elif int(user.user_type) == 3:
+        User = Student.objects.filter(student=user, approved=True).first()
+    Students = []
+    Month = []
+    month = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    if request.method == "POST":
+        subject = request.POST["subject"]
+        sub = SubjectWithStaff.objects.get(id=subject)
+        attendances = Attendance.objects.filter(subject_id=sub)
+        Students = { st:{ m:0 for m in month} for st in Student.objects.filter(sem=sub.subject_id.semester_id, course_id=sub.subject_id.course_id)}
+        Month = {mon:0 for mon in month}
+
+
+        for att in attendances:
+            Month[month[att.created_at.month]] += 1
+            for ar in AttendanceReport.objects.filter(attendance_id=att):
+                if ar.status:
+                    Students[ar.student_id][month[att.created_at.month]] += 1
+
+        data = {
+            "user": User,
+            "usertype": usertypedata[int(user.user_type)],
+            "student": Students,
+            'subjects': SubjectWithStaff.objects.filter(session_id=Session.objects.last()),
+            'sub': sub,
+            "month": Month,
+        }
+        return render(request, "monthly_attendance.html", data)
+    else:
+        data = {
+            "user": User,
+            "usertype": usertypedata[int(user.user_type)],
+            'subjects': SubjectWithStaff.objects.filter(session_id=Session.objects.last())
+        }
+        return render(request, "monthly_attendance.html", data)
 
 

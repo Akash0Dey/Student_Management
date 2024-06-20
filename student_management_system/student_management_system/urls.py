@@ -20,11 +20,16 @@ from django.conf.urls.static import static
 from django.urls import path
 from datamodule import views as d_views
 from usermodule import views as u_views
+from attendances import views as a_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('', d_views.index, name="index"),
+
+    path('attendance/snapshot',a_views.snapshots_cap, name='snapshot'),
+
+    path('process_frame/<int:attendance_id>/', a_views.process_frame, name='process_frame'),
 
     # user login/logout
 
@@ -65,7 +70,7 @@ urlpatterns = [
     # Staff Side
 
     path('staff/form', u_views.Staff_Form, name="Staff_Form"),
-
+    
     path('staff/form/update', u_views.Staff_update, name="Staff_update"),
 
     path('staff/list', d_views.Staff_list, name="stafflist"),
@@ -124,13 +129,17 @@ urlpatterns = [
 
     path('attendance/', d_views.take_attendance, name="take_attendance"),
 
-    path('attendance/<int:attendance_id>/', d_views.attendance, name="attendance"),
+    path('attendance/manual/<int:attendance_id>/', d_views.attendance, name="attendance"),
+
+    path('attendance/video/<int:attendance_id>/', a_views.video_attendance, name="video_attendance"),
 
     path('show_attendance/<int:attendance_id>/', d_views.show_attendance, name="show_attendance"),
     
     path('show_attendance/', d_views.show_attendance, name="showAttendance"),
     
     path('update_attendance/<int:attendance_id>/', d_views.attendance, name="update_attendance"),
+
+    path('attendance/monthly/', d_views.monthly_attendance, name="monthly_attendance"),
 
     # Accept User
 
